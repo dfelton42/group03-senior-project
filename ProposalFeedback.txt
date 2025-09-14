@@ -1,0 +1,29 @@
+CMSI 4071 Fall 2025
+Project Proposal Feedback
+Project: Plot
+=========================
+
+Proposal Document [3 points]:
+-----------------------------
+Nice work here.  You have described your application very well, and reading
+through the first paragraph gives me a general sense of what your 'problem'
+is and how you plan to solve it.  The comparison with existing applications
+add context.  The features list is good to show what your plan is.
+
+The justification section is also good, short and to the point without just
+listing all the courses you took at LMU.  Framing this project and working
+on it as an "integration" of your knowledge is a good idea
+
+Proposal Presentation [2 points]:
+---------------------------------
+Your presentation is very nice, meets all the requirements as listed, and
+provides enough detail so the audience can be interested without having so
+much text that they can't read it all before the next slide appears.  I
+enjoyed the presentation and you answered questions well.  Good audience
+reception, too.
+
+Summary:
+--------
+Nice job overall!  Keep up the good work.
+
+5 out of 5 for an A-plus on this deliverable.
