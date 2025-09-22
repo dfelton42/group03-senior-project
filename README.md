@@ -1,2 +1,2 @@
 # group03-senior-project
-Group 03 Senior Project - Music App combining Spotify and Apple Music
+Group 03 Senior Project - Plot, an app for events on campus. 
