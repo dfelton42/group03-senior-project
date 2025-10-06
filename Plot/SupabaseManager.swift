@@ -15,8 +15,8 @@ class SupabaseManager {
     
     private init() {
         self.client = SupabaseClient(
-            supabaseURL: URL(string: "https://our_url_here.supabase.co")!,
-            supabaseKey: "Our_Key"
+            supabaseURL: URL(string: "https://zffnbseyutdajtkhmgvl.supabase.co")!,
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmZm5ic2V5dXRkYWp0a2htZ3ZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3ODYzODQsImV4cCI6MjA3NTM2MjM4NH0.r4z5R9gufafrMQ_HvHbb9Yna0a5zlv1244v4tD-wWUU"
         )
     }
     
