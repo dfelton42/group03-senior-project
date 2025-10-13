@@ -1,0 +1,70 @@
+
+Essay Feedback
+Homework Assignment #1
+CMSI 4071 Fall 2025
+======================
+
+SUMMARY:
+The essay provides a clear and accurate summary of the ValuJet 592 incident.
+It outlines the sequence of events leading to the crash, including the
+initial signs of trouble, the rapid escalation, and the ultimate failure of
+the aircraft.
+
+The essay effectively identifies the root causes of the disaster: mishandling
+of hazardous materials, lack of proper safety protocols, regulatory oversight
+failures, and systemic breakdowns.
+
+The essay references the roles of ValuJet, SabreTech, and the FAA, and
+explains how their actions (or inactions) contributed to the tragedy.
+
+The narrative is well-structured and easy to follow, with a logical flow from
+the incident to the investigation and its findings.
+
+The essay goes beyond recounting events by analyzing the systemic nature of the
+failure and drawing analogies to biological systems, which adds depth to the
+summary.
+
+CRITICAL THINKING:
+The essay draws strong parallels between the ValuJet incident and software
+engineering, particularly in the context of system complexity, communication,
+and responsibility.
+
+The analogy between SabreTech and a negligent software team is well-developed.
+The essay emphasizes the importance of testing, communication, and shared
+responsibility between developers and clients.
+
+The essay touches on key software engineering practices: code review, testing,
+documentation, communication, and risk management. It also highlights ethical
+responsibilities, which is a critical aspect of engineering.
+
+The points made are grounded in real-world software development practices. The
+essay avoids overly abstract or unrealistic suggestions.
+
+The section is well-organized, with clear transitions and logical progression
+from one idea to the next. The writing is articulate and professional.
+
+OVERALL ASSESSMENT:
+   Category                          Points
+   Summary of article                  25
+   Relation to S/W engineering         25
+   Thoughts/opinions presented         25
+   Spelling/Grammar                    25
+                                     -----
+   Subtotal                           100
+   ------------------------------------------------------
+   Total Percentage:   100 out of 100 which is an A-plus
+
+Final Summary
+The application to software engineering is thoughtful, relevant, and well-
+articulated, demonstrating a strong understanding of both the article and its
+implications for engineering practice.
+
+This essay is a strong and well-executed assignment. It provides a compelling
+and accurate synopsis of the ValuJet 592 article and thoughtfully applies its
+lessons to software engineering. The analogies drawn between aviation safety
+failures and software development risks are insightful and effectively
+highlight the importance of communication, testing, and ethical responsibility
+in engineering.
+
+Well done!
+
