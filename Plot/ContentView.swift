@@ -7,41 +7,39 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var events: [Event] = []
-    @State private var isLoading = true
-
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color("AppBackground").ignoresSafeArea()
+        TabView {
+            // HOME
+            NavigationStack {
+                HomeView()
+            }
+            .tabItem {
+                Image(systemName: "house.fill")
+                Text("Home")
+            }
 
-                if isLoading {
-                    VStack(spacing: 12) {
-                        ProgressView()
-                            .progressViewStyle(.circular)
-                            .tint(Color("AccentColor"))
-                        Text("Loading events…")
-                            .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.7))
-                    }
-                } else {
-                    EventListView(events: events)
-                        .background(Color("AppBackground"))
-                }
+            // SEARCH
+            NavigationStack {
+                SearchView()
             }
-            .navigationTitle("Campus Events")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(Color("AppBackground"), for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
+            .tabItem {
+                Image(systemName: "magnifyingglass")
+                Text("Search")
+            }
+
+            // NOTIFICATIONS
+            NavigationStack {
+                NotificationsView()
+            }
+            .tabItem {
+                Image(systemName: "bell.fill")
+                Text("Notifications")
+            }
         }
+        .tint(Color("AccentColor"))
+        .toolbarBackground(Color("AppBackground"), for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
+        .background(Color("AppBackground").ignoresSafeArea())
         .preferredColorScheme(.dark)
-        .task {
-            do {
-                events = try await SupabaseManager.shared.fetchEvents()
-            } catch {
-                print("Error loading events:", error)
-            }
-            isLoading = false
-        }
     }
 }
