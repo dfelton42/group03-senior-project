@@ -33,6 +33,14 @@ struct HomeView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(Color("AppBackground"), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
+
+        .toolbar {
+            NavigationLink(destination: SettingsView()) {
+                Image(systemName: "gearshape")
+                    .foregroundColor(.white)
+            }
+        }
+
         .task {
             do {
                 events = try await SupabaseManager.shared.fetchEvents()
@@ -43,6 +51,7 @@ struct HomeView: View {
         }
     }
 }
+
 #Preview {
     HomeView()
 }

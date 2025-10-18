@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3943F08C2EA31F2000757085 /* PlotChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3943F08B2EA31F1B00757085 /* PlotChat.swift */; };
 		3943F0912EA37D8400757085 /* ChatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3943F0902EA37D7900757085 /* ChatService.swift */; };
+		398EA1762EA40FB700B4D980 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398EA1752EA40FB100B4D980 /* SettingsView.swift */; };
 		B3B873AC2E7E2F9C0008FB3A /* PlotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B873AB2E7E2F9C0008FB3A /* PlotApp.swift */; };
 		B3B873AE2E7E2F9C0008FB3A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B873AD2E7E2F9C0008FB3A /* ContentView.swift */; };
 		B3B873B02E7E2F9E0008FB3A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3B873AF2E7E2F9E0008FB3A /* Assets.xcassets */; };
@@ -52,6 +53,7 @@
 /* Begin PBXFileReference section */
 		3943F08B2EA31F1B00757085 /* PlotChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlotChat.swift; sourceTree = "<group>"; };
 		3943F0902EA37D7900757085 /* ChatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatService.swift; sourceTree = "<group>"; };
+		398EA1752EA40FB100B4D980 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		B3B873A82E7E2F9C0008FB3A /* Plot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Plot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B873AB2E7E2F9C0008FB3A /* PlotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlotApp.swift; sourceTree = "<group>"; };
 		B3B873AD2E7E2F9C0008FB3A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 		B3B873AA2E7E2F9C0008FB3A /* Plot */ = {
 			isa = PBXGroup;
 			children = (
+				398EA1752EA40FB100B4D980 /* SettingsView.swift */,
 				3943F0902EA37D7900757085 /* ChatService.swift */,
 				DED19AC42E9DD18500526CB5 /* SplashView.swift */,
 				B3B873AB2E7E2F9C0008FB3A /* PlotApp.swift */,
@@ -322,6 +325,7 @@
 				DED19AC72EA089B600526CB5 /* HomeView.swift in Sources */,
 				B3B873D82E7E303C0008FB3A /* EventListView.swift in Sources */,
 				DED19AC52E9DD18A00526CB5 /* SplashView.swift in Sources */,
+				398EA1762EA40FB700B4D980 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

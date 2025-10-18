@@ -43,10 +43,14 @@ struct ChatBotView: View {
                     messages.append("You: \(userText)")
                     input = ""
 
-                    let reply = localReply(for: userText, events: allEvents)
+                    // Apply spell correction before searching
+                    let fixedQuery = correctedQuery(userText)
+                    let reply = localReply(for: fixedQuery, events: allEvents)
+
                     messages.append("Bot: \(reply)")
                 }
                 .buttonStyle(.borderedProminent)
+
             }
             .padding()
         }
@@ -111,6 +115,46 @@ struct ChatBotView: View {
     }
 
 }
+func levenshtein(_ a: String, _ b: String) -> Int {
+        let a = Array(a.lowercased())
+        let b = Array(b.lowercased())
+        var dist = [[Int]](repeating: [Int](repeating: 0, count: b.count + 1), count: a.count + 1)
+
+        for i in 0...a.count { dist[i][0] = i }
+        for j in 0...b.count { dist[0][j] = j }
+
+        for i in 1...a.count {
+            for j in 1...b.count {
+                dist[i][j] = min(
+                    dist[i-1][j] + 1,
+                    dist[i][j-1] + 1,
+                    dist[i-1][j-1] + (a[i-1] == b[j-1] ? 0 : 1)
+                )
+            }
+        }
+        return dist[a.count][b.count]
+    }
+
+    func correctedQuery(_ text: String) -> String {
+        let commonWords = ["today", "tomorrow", "next", "party", "concert", "event", "hockey", "house", "team"]
+        let words = text.split(separator: " ")
+        var corrected: [String] = []
+
+        for word in words {
+            var best = word
+            var minDist = Int.max
+            for known in commonWords {
+                let d = levenshtein(String(word), known)
+                if d < minDist && d <= 2 { // small typo distance threshold
+                    minDist = d
+                    best = Substring(known)
+                }
+            }
+            corrected.append(String(best))
+        }
+        return corrected.joined(separator: " ")
+    }
+
 
 #Preview {
     ChatBotView()
