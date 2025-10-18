@@ -1,0 +1,103 @@
+
+Documentation Feedback ~ Deliverable #2
+Software Requirements Specification
+Initial Development Schedule
+CMSI 4071 Fall 2025
+=======================================
+
+COMPONENT BREAKDOWN:
+====================
+The diagram for this is minimal.  It would be better to have a 'real'
+diagram with labeled boxes and lines and such.
+
+FUNCTIONAL REQUIREMENTS:
+========================
+Strengths:
+   Functional requirements are clearly categorized by CSC (Client,
+      Backend, Integration, Notifications), aligning well with waterfall
+         methodology.
+   Each requirement is written in a testable “shall” format.
+   Covers core user interactions: event browsing, RSVP, voting, filtering,
+      and notifications.
+   Backend responsibilities (data storage, authentication, API endpoints)
+      are clearly defined.
+   Integration with external services (Google Maps, Uber) is acknowledged
+      and scoped.
+
+Gaps / Suggestions:
+User Roles & Permissions: There is mention of "trusted hosts," but no
+   detailed requirements for role-based access control (e.g., admin, host,
+      regular user).
+Event Creation & Moderation: While event creation is implied in the backend
+   API (5.3.2.6), the client-side functionality for creating or editing
+   events is not explicitly defined.
+Error Handling: No functional requirements describe how the system handles
+   errors (e.g., failed RSVP, API errors, invalid data).
+User Profile Management: Authentication is covered, but there are no
+   requirements for managing user profiles (e.g., editing profile, viewing
+   RSVP history).
+Accessibility & Usability: No mention of accessibility standards (e.g., for
+   screen readers, color contrast) or usability features (e.g., onboarding,
+   help screens).
+
+PERFORMANCE REQUIREMENTS:
+=========================
+Strengths:
+   Quantitative and measurable performance targets are provided:
+      Event feed response time (= 3 seconds)
+      Map rendering (= 2 seconds)
+      RSVP/vote processing (= 1 second)
+      Notification delivery (= 30 seconds)
+      Support for 100 concurrent users
+
+Gaps / Suggestions:
+Scalability: While 100 concurrent users is a good baseline, consider defining
+   how the system should scale (e.g., 500 or 1,000 users).
+Availability & Reliability: No mention of uptime targets (e.g., 99.9%
+   availability) or fault tolerance.
+Load Testing: No requirements for how the system should behave under peak
+   load or stress conditions.
+
+ENVIRONMENT REQUIREMENTS:
+=========================
+Strengths:
+   Clearly separates development and execution environments.
+   Lists required tools (Xcode, GitHub, Postman) and platforms (iOS 15+,
+      Supabase).
+   Specifies hardware and connectivity needs for users.
+
+Gaps / Suggestions:
+   Security Environment: No mention of security practices (e.g., data
+      encryption, secure API keys, authentication token handling).
+   Testing Environment: No mention of staging or QA environments for
+      pre-deployment testing.
+   CI/CD Pipeline: Could benefit from specifying tools or practices for
+      continuous integration and deployment.
+
+
+OVERALL ASSESSMENT:
+   Category                          Points
+   Component Breakdown                 1/1
+   Functional Requirements             4/4
+   Performance Requirements            2/2
+   Environment Requirements            1/1
+                                     =====
+   Subtotal                            8/8
+   Preliminary Schedule                2/2
+   ------------------------------------------------------
+   Total Percentage:   10/10 = 100% which is an A-plus
+
+Recommendations: To strengthen this SRS for a waterfall development process:
+   Add user roles and permissions matrix.
+   Include client-side event creation and profile management features.
+   Define error handling and fallback behaviors.
+   Expand performance requirements to include availability and load testing.
+   Add security and testing environment specifications.
+
+Your preliminary schedule was supposed to be a Gantt or PERT chart.  You've
+   simply listed the deliverables with the weeks you're planning.  Make an
+   actual schedule chart that shows the durations and linkages with your
+   development.  Then include this in your SDP.
+
+Nice work on this deliverable!  Make the changes indicated by the end of the
+semester for full credit on the document.
