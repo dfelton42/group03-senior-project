@@ -1,0 +1,50 @@
+
+Documentation Feedback ~ Deliverable #3
+Software Development Plan
+CMSI 4071 Fall 2025
+=======================================
+
+INTRODUCTION/DELIVERABLES SECTION:
+----------------------------------
+This section is well-developed and includes all required deliverables with
+   due dates, descriptions, and relevant technologies.
+The inclusion of screenshots or diagrams (mentioned in the manual section)
+   would enhance clarity.
+
+PROJECT RESOURCES SECTION:
+----------------------------------
+You could briefly mention any testing devices (e.g., iPhone models or
+   simulators) if applicable.
+Consider specifying versions of tools (e.g., Xcode 15, Swift 5.9) for
+   reproducibility.
+
+PROJECT ORGANIZATION SECTION:
+----------------------------------
+Consider adding a brief note on communication tools (Slack, email,
+   meetings) and decision-making protocols.
+A visual org chart could enhance clarity but is not required.
+
+PROJECT SCHEDULE SECTION:
+----------------------------------
+The chart is detailed and well-structured.
+Consider including milestones or dependencies between tasks for better
+   visualization of sequencing.
+A link to the Jira board is provided, which presumably contains the
+   task/resource breakdown.  While the link is helpful, a brief summary or
+   sample of the table in the document would improve accessibility.
+Ensure the Jira board is publicly viewable or accessible to reviewers.
+
+OVERALL ASSESSMENT:
+----------------------------------
+   Category                          Points
+   Project Deliverables                1
+   Project Resources                   1
+   Project Organization                1
+   Project Schedule                    2
+                                     =====
+   Subtotal                            5
+   ------------------------------------------------------
+   Total Percentage:   5/5 = 100% which is an A-plus
+
+
+Nice work!
