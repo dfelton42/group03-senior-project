@@ -43,7 +43,6 @@ struct ChatBotView: View {
                     messages.append("You: \(userText)")
                     input = ""
 
-                    // Apply spell correction before searching
                     let fixedQuery = correctedQuery(userText)
                     let reply = localReply(for: fixedQuery, events: allEvents)
 
@@ -67,14 +66,13 @@ struct ChatBotView: View {
         }
     }
 
-    // MARK: - Local search logic
     func localReply(for query: String, events: [Event]) -> String {
         guard !events.isEmpty else { return "No events available right now." }
 
         let lower = query.lowercased()
         let now = Date()
 
-        // --- based on time, can add complexity later such as distance---
+        // --- based on time, can add complexity later such as distance --
         if lower.contains("next") || lower.contains("soon") || lower.contains("upcoming") {
             if let nearest = events.filter({ $0.date > now }).sorted(by: { $0.date < $1.date }).first {
                 return "The next event is \(nearest.title) — \(nearest.description)\n📅 \(nearest.date.formatted(date: .abbreviated, time: .shortened))"
@@ -99,7 +97,6 @@ struct ChatBotView: View {
             }
         }
 
-        // --- KEYWORD MATCH (fallback) ---
         let matches = events.filter {
             $0.title.localizedCaseInsensitiveContains(query) ||
             $0.description.localizedCaseInsensitiveContains(query)
@@ -134,7 +131,7 @@ func levenshtein(_ a: String, _ b: String) -> Int {
         }
         return dist[a.count][b.count]
     }
-
+    // also going to add more common words later
     func correctedQuery(_ text: String) -> String {
         let commonWords = ["today", "tomorrow", "next", "party", "concert", "event", "hockey", "house", "team"]
         let words = text.split(separator: " ")
@@ -145,7 +142,7 @@ func levenshtein(_ a: String, _ b: String) -> Int {
             var minDist = Int.max
             for known in commonWords {
                 let d = levenshtein(String(word), known)
-                if d < minDist && d <= 2 { // small typo distance threshold
+                if d < minDist && d <= 2 {
                     minDist = d
                     best = Substring(known)
                 }

@@ -12,38 +12,62 @@ struct EventListView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 12) {
+            LazyVStack(spacing: 16) {
                 ForEach(events) { event in
-                    NavigationLink {
-                        EventDetailView(event: event)
-                    } label: {
-                        HStack(alignment: .top, spacing: 12) {
-                            VStack(alignment: .leading, spacing: 4) {
+                    NavigationLink(destination: EventDetailView(event: event)) {
+                        HStack(spacing: 16) {
+                            ZStack {
+                                Circle()
+                                    .fill(LinearGradient(
+                                        colors: [Color.purple.opacity(0.6), Color.blue.opacity(0.5)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ))
+                                    .frame(width: 48, height: 48)
+                                
+                            
+                                Text("🎟️")
+                                    .font(.system(size: 24))
+                                
+                                // note for later: I could change emoji to image
+                                // Image("event_placeholder")
+                                //     .resizable()
+                                //     .scaledToFill()
+                                //     .frame(width: 48, height: 48)
+                                //     .clipShape(Circle())
+                            }
+
+                            VStack(alignment: .leading, spacing: 6) {
                                 Text(event.title)
-                                    .font(.headline)
+                                    .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
 
                                 Text(event.date, style: .date)
-                                    .font(.subheadline)
+                                    .font(.system(size: 14))
                                     .foregroundColor(.white.opacity(0.6))
                             }
+
                             Spacer()
                             Image(systemName: "chevron.right")
-                                .foregroundColor(.white.opacity(0.35))
                                 .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.35))
                         }
-                        .padding(16)
-                        .background(Color.white.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .stroke(Color.white.opacity(0.07))
+                        .padding()
+                        .background(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.08), Color.white.opacity(0.02)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
                     }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
         }
         .background(Color("AppBackground").ignoresSafeArea())
     }
