@@ -29,7 +29,7 @@ struct ForgotPasswordView: View {
             .padding(.horizontal, 20)
             
             Button("Send Reset Link") {
-                // Perform password reset action here
+              
                 print("Sending reset link to \(email)")
             }
             .modifier(PrimaryButtonStyle())
@@ -43,7 +43,7 @@ struct ForgotPasswordView: View {
                 Text("Back to")
                     .foregroundColor(.gray)
                 NavigationLink {
-                    LoginView() // Or pop to root if this is deep in a stack
+                    LoginView()
                 } label: {
                     Text("Sign In")
                         .fontWeight(.semibold)
@@ -55,9 +55,7 @@ struct ForgotPasswordView: View {
         }
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
-        // You might want a back button from the image.
-        // For simple navigation, the default back button will appear
-        // if this view is pushed onto a NavigationView stack.
+        
     }
 }
 
@@ -69,7 +67,7 @@ struct ForgotPasswordView: View {
 struct AuthFlowView: View {
     var body: some View {
         NavigationView {
-            // do logic for which screen to show
+          
             LoginView()
         }
     }

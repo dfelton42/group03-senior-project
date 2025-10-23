@@ -43,7 +43,7 @@ struct SignUpView: View {
                 .modifier(AuthInputFieldStyle())
                 
                 HStack {
-                    Image(systemName: "lock.fill") // Reusing lock icon for consistency
+                    Image(systemName: "lock.fill")
                         .foregroundColor(.gray)
                     SecureField("Confirm Password", text: $confirmPassword)
                 }
@@ -60,7 +60,7 @@ struct SignUpView: View {
             .padding(.horizontal, 20)
             
             Button("Create Account") {
-                // Perform sign up action here
+               
                 print("Signing up with \(name), \(email), \(password)")
             }
             .modifier(PrimaryButtonStyle())
@@ -69,12 +69,12 @@ struct SignUpView: View {
             
             Spacer()
             
-            // Already have an account link
+
             HStack(spacing: 5) {
                 Text("Already have an account?")
                     .foregroundColor(.gray)
                 NavigationLink {
-                    LoginView() // Or pop to root
+                    LoginView() 
                 } label: {
                     Text("Sign In")
                         .fontWeight(.semibold)

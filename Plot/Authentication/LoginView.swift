@@ -10,8 +10,8 @@ struct LoginView: View {
     @State private var password = ""
     
     var body: some View {
-        VStack(spacing: 25) { // Increased spacing for visual separation
-            Spacer() // Pushes content to the center-top
+        VStack(spacing: 25) { 
+            Spacer()
             
             Text("Sign In")
                 .font(.largeTitle)
@@ -33,7 +33,7 @@ struct LoginView: View {
                 }
                 .modifier(AuthInputFieldStyle())
                 
-                // Forgot password link
+            
                 HStack {
                     Spacer()
                     NavigationLink {
@@ -45,21 +45,21 @@ struct LoginView: View {
                             .foregroundColor(.purple)
                     }
                 }
-                .padding(.top, -10) // Adjust spacing
+                .padding(.top, -10)
             }
-            .padding(.horizontal, 20) // Horizontal padding for text fields
+            .padding(.horizontal, 20)
             
             Button("Log In") {
-                // Perform login action here
+      
                 print("Logging in with \(email) and \(password)")
             }
             .modifier(PrimaryButtonStyle())
             .padding(.horizontal, 20)
-            .padding(.top, 10) // Space between fields and button
+            .padding(.top, 10)
             
-            Spacer() // Pushes content to the center
+            Spacer()
             
-            // Don't have an account link
+        
             HStack(spacing: 5) {
                 Text("Don't have an account?")
                     .foregroundColor(.gray)
@@ -72,8 +72,8 @@ struct LoginView: View {
                 }
             }
             .font(.callout)
-            .padding(.bottom, 30) // Space from bottom edge
+            .padding(.bottom, 30)
         }
-        .navigationBarHidden(true) // Hide default navigation bar
+        .navigationBarHidden(true)
     }
 }
