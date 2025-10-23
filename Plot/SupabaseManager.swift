@@ -29,4 +29,16 @@ class SupabaseManager {
             .value
         return response
     }
+    
+    func isUserAuthenticated() async -> Bool {
+            do {
+                // Get the current session. If successful, the user is authenticated.
+                let session = try await client.auth.session
+                return true
+            } catch {
+                // If fetching the session fails (e.g., token expired, network error, no session),
+                // treat it as unauthenticated for this check.
+                return false
+            }
+        }
 }
