@@ -1,0 +1,40 @@
+
+
+HW 2 - Piloni & Miles Textbook
+CMSI 4071 Fall 2025
+
+Category        Weight     Earned
+===========    ========    ======
+Problem 1      [3 pts.]      3.0
+Problem 2      [4 pts.]      3.0
+Problem 3      [6 pts.]      6.0
+Problem 4      [9 pts.]      9.0
+Problem 5      [2 pts.]      1.0
+Problem 6      [7 pts.]      5.0
+Problem 7      [1 pt.]       1.0
+Problem 8      [3 pts.]      3.0
+Problem 9      [5 pts.]      5.0
+Problem 10     [4 pts.]      4.0
+
+      Subtotal [44 max]     44.0
+             Your Total     40.0 which is 90.91%
+
+         Letter grade   A-minus
+
+problem 2, Mostly correct, though standard Agile phases are requirements,
+   design, implementation, testing, and review.  While initial planning
+   helps, repeating phases ensures adaptability and prevents costly rework.
+
+problem 5, your statements are too general; they are reasonable but lack
+   depth compared to best practice guidance.  Assumptions are acceptable if
+   they are validated early.  Large user stories should be split into small
+   tasks for better estimation and progress tracking.
+
+problem 6, Incorrect for second blank (User Story instead of Estimate) and
+   last blank (Blueskying instead of Planning Poker).
+
+problem 9, Good reasoning but could include risks of poor communication.
+
+problem 10, Acceptable but lacks personal insight.
+
+nice work!
