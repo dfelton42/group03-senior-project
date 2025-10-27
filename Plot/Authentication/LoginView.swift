@@ -50,8 +50,15 @@ struct LoginView: View {
             .padding(.horizontal, 20)
             
             Button("Log In") {
-      
-                print("Logging in with \(email) and \(password)")
+                Task {
+                    do {
+                        try await SupabaseManager.shared.signIn(email: email, password: password)
+                        print("✅ Logged in successfully")
+                        // TODO: communicate back to parent view that user is authenticated
+                    } catch {
+                        print("❌ Error logging in: \(error.localizedDescription)")
+                    }
+                }
             }
             .modifier(PrimaryButtonStyle())
             .padding(.horizontal, 20)

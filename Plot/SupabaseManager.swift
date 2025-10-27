@@ -10,7 +10,6 @@ import Supabase
 
 class SupabaseManager {
     static let shared = SupabaseManager()
-    
     let client: SupabaseClient
     
     private init() {
@@ -20,24 +19,47 @@ class SupabaseManager {
         )
     }
     
+    //Î Database
     func fetchEvents() async throws -> [Event] {
-        let response: [Event] = try await client
-            .database
+        try await client.database
             .from("events")
             .select()
+            .order("date", ascending: true)
             .execute()
             .value
-        return response
+    }
+    
+    // Authentication
+    func signUp(email: String, password: String) async throws {
+        guard email.lowercased().hasSuffix("@lion.lmu.edu") else {
+            throw NSError(
+                domain: "AuthError",
+                code: 400,
+                userInfo: [NSLocalizedDescriptionKey: "You must use a @lion.lmu.edu email address."]
+            )
+        }
+        try await client.auth.signUp(email: email, password: password)
+    }
+    
+    func signIn(email: String, password: String) async throws {
+        try await client.auth.signIn(email: email, password: password)
+    }
+    
+    func sendPasswordReset(email: String) async throws {
+        try await client.auth.resetPasswordForEmail(email)
+    }
+    
+    func signOut() async {
+        try? await client.auth.signOut()
     }
     
     func isUserAuthenticated() async -> Bool {
-            do {
-                // Get the current session. If successful, the user is authenticated.
-                let _ = try await client.auth.session
-                return true
-            } catch {
-                
-                return false
-            }
+        do {
+            let session = try await client.auth.session
+            return session.user.id != nil
+        } catch {
+            // Throws when there’s no valid session
+            return false
         }
+    }
 }
