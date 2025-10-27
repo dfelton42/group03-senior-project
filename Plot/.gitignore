@@ -1,0 +1,9 @@
+# Build products
+build/
+
+# General user-specific files and settings
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Swift Package Manager
+.swiftpm/
