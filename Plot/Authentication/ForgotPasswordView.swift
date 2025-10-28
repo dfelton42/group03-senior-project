@@ -29,14 +29,8 @@ struct ForgotPasswordView: View {
             .padding(.horizontal, 20)
             
             Button("Send Reset Link") {
-                Task {
-                    do {
-                        try await SupabaseManager.shared.sendPasswordReset(email: email)
-                        print("📩 Password reset link sent to \(email)")
-                    } catch {
-                        print("❌ Error sending reset link: \(error.localizedDescription)")
-                    }
-                }
+              
+                print("Sending reset link to \(email)")
             }
             .modifier(PrimaryButtonStyle())
             .padding(.horizontal, 20)

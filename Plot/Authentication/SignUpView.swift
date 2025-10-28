@@ -60,19 +60,8 @@ struct SignUpView: View {
             .padding(.horizontal, 20)
             
             Button("Create Account") {
-                guard password == confirmPassword else {
-                    print("Passwords do not match")
-                    return
-                }
-                
-                Task {
-                    do {
-                        try await SupabaseManager.shared.signUp(email: email, password: password)
-                        print("✅ Account created! Check your LMU email for confirmation.")
-                    } catch {
-                        print("❌ Error creating account: \(error.localizedDescription)")
-                    }
-                }
+               
+                print("Signing up with \(name), \(email), \(password)")
             }
             .modifier(PrimaryButtonStyle())
             .padding(.horizontal, 20)
