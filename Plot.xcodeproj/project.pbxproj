@@ -28,7 +28,6 @@
 		D03F23C12EA9BC6000EC8829 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03F23BE2EA9BC6000EC8829 /* SignUpView.swift */; };
 		D03F23C22EA9BC6000EC8829 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03F23BD2EA9BC6000EC8829 /* LoginView.swift */; };
 		D03F23C32EA9BC6000EC8829 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03F23BC2EA9BC6000EC8829 /* ForgotPasswordView.swift */; };
-		D03F23C52EB03D4C00EC8829 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = D03F23C42EB03D4500EC8829 /* .gitignore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,7 +67,6 @@
 		D03F23BC2EA9BC6000EC8829 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		D03F23BD2EA9BC6000EC8829 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		D03F23BE2EA9BC6000EC8829 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
-		D03F23C42EB03D4500EC8829 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,11 +123,7 @@
 		B3B873AA2E7E2F9C0008FB3A /* Plot */ = {
 			isa = PBXGroup;
 			children = (
-<<<<<<< HEAD
 				B3121D532EB03B9700CAC539 /* Info.plist */,
-=======
-				D03F23C42EB03D4500EC8829 /* .gitignore */,
->>>>>>> e974476179273d3c7a5110f0f0f8e2d905c015b1
 				D03F23BF2EA9BC6000EC8829 /* Authentication */,
 				B3B873AB2E7E2F9C0008FB3A /* PlotApp.swift */,
 				B3B873AD2E7E2F9C0008FB3A /* ContentView.swift */,
@@ -295,7 +289,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3B873B32E7E2F9E0008FB3A /* Preview Assets.xcassets in Resources */,
-				D03F23C52EB03D4C00EC8829 /* .gitignore in Resources */,
 				B3B873B02E7E2F9E0008FB3A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
