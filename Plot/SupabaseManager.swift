@@ -11,6 +11,7 @@ import Supabase
 class SupabaseManager {
     static let shared = SupabaseManager()
     let client: SupabaseClient
+    var currentUser: User?
     
     private init() {
         self.client = SupabaseClient(
@@ -27,6 +28,46 @@ class SupabaseManager {
             .order("date", ascending: true)
             .execute()
             .value
+    }
+    func fetchRsvpStatus(eventId: UUID) async throws -> Bool {
+        // TODO: create an AuthService Object so that there are not repeated calls to get user Id
+        // TODO: create Client-Side caching for event rsvp status to limit refetches on new event load
+        let response = try await client.database
+            .from("rsvps")
+            .select()
+            .eq("event_id", value: eventId)
+            .eq("user_id", value: client.auth.session.user.id) composite key
+            .execute()
+        let jsonData = response.data
+        if jsonData.isEmpty { return false}
+        
+        let decodedObject = try JSONSerialization.jsonObject(with: jsonData, options: [])
+            
+        guard let rsvpRecords = decodedObject as? [[String: Any]] else {
+            return false
+        }
+        
+        return !rsvpRecords.isEmpty
+
+    }
+    func addRsvp(eventId: UUID) async throws {
+        try await client.database
+            .from("rsvps")
+            .insert([
+                "event_id": eventId,
+                "user_id": client.auth.session.user.id
+            ])
+            .execute()
+    }
+    
+    
+    func removeRsvp(eventId:UUID) async throws {
+        try await client.database
+            .from("rsvps")
+            .delete()
+            .eq("event_id", value: eventId)
+            .eq("user_id", value: client.auth.session.user.id)
+            .execute()
     }
     
     // Authentication
@@ -55,10 +96,9 @@ class SupabaseManager {
     
     func isUserAuthenticated() async -> Bool {
         do {
-            let session = try await client.auth.session
-            return session.user.id != nil
+            self.currentUser = try await client.auth.session.user
+            return true
         } catch {
-            // Throws when there’s no valid session
             return false
         }
     }
