@@ -36,7 +36,7 @@ class SupabaseManager {
             .from("rsvps")
             .select()
             .eq("event_id", value: eventId)
-            .eq("user_id", value: client.auth.session.user.id) composite key
+            .eq("user_id", value: client.auth.session.user.id)
             .execute()
         let jsonData = response.data
         if jsonData.isEmpty { return false}
