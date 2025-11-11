@@ -96,8 +96,8 @@ class SupabaseManager {
     
     func isUserAuthenticated() async -> Bool {
         do {
-            self.currentUser = try await client.auth.session.user
-            return true
+            let session = try await client.auth.session
+            return session.user != nil
         } catch {
             return false
         }
