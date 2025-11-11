@@ -24,7 +24,7 @@
 		B3B873F12E7E38F50008FB3A /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = B3B873F02E7E38F50008FB3A /* PostgREST */; };
 		B3B873F32E7E38F50008FB3A /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = B3B873F22E7E38F50008FB3A /* Realtime */; };
 		B3B873F52E7E38F50008FB3A /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = B3B873F42E7E38F50008FB3A /* Storage */; };
-		D03F23C02EA9BC6000EC8829 /* AuthViewStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03F23BB2EA9BC6000EC8829 /* AuthViewStyles.swift */; };
+		D03F23C02EA9BC6000EC8829 /* ViewStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03F23BB2EA9BC6000EC8829 /* ViewStyles.swift */; };
 		D03F23C12EA9BC6000EC8829 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03F23BE2EA9BC6000EC8829 /* SignUpView.swift */; };
 		D03F23C22EA9BC6000EC8829 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03F23BD2EA9BC6000EC8829 /* LoginView.swift */; };
 		D03F23C32EA9BC6000EC8829 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03F23BC2EA9BC6000EC8829 /* ForgotPasswordView.swift */; };
@@ -63,7 +63,7 @@
 		B3B873D72E7E303C0008FB3A /* EventListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventListView.swift; sourceTree = "<group>"; };
 		B3B873D92E7E305E0008FB3A /* EventDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailView.swift; sourceTree = "<group>"; };
 		B3B873DB2E7E30900008FB3A /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
-		D03F23BB2EA9BC6000EC8829 /* AuthViewStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewStyles.swift; sourceTree = "<group>"; };
+		D03F23BB2EA9BC6000EC8829 /* ViewStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewStyles.swift; sourceTree = "<group>"; };
 		D03F23BC2EA9BC6000EC8829 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		D03F23BD2EA9BC6000EC8829 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		D03F23BE2EA9BC6000EC8829 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
@@ -124,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				B30191E02EB1755D0042D0AF /* Info.plist */,
+				D03F23BB2EA9BC6000EC8829 /* ViewStyles.swift */,
 				D03F23BF2EA9BC6000EC8829 /* Authentication */,
 				B3B873AB2E7E2F9C0008FB3A /* PlotApp.swift */,
 				B3B873AD2E7E2F9C0008FB3A /* ContentView.swift */,
@@ -165,7 +166,6 @@
 		D03F23BF2EA9BC6000EC8829 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
-				D03F23BB2EA9BC6000EC8829 /* AuthViewStyles.swift */,
 				D03F23BC2EA9BC6000EC8829 /* ForgotPasswordView.swift */,
 				D03F23BD2EA9BC6000EC8829 /* LoginView.swift */,
 				D03F23BE2EA9BC6000EC8829 /* SignUpView.swift */,
@@ -319,7 +319,7 @@
 				B3B873D62E7E301D0008FB3A /* Event.swift in Sources */,
 				B3B873DC2E7E30900008FB3A /* SupabaseManager.swift in Sources */,
 				B3B873AC2E7E2F9C0008FB3A /* PlotApp.swift in Sources */,
-				D03F23C02EA9BC6000EC8829 /* AuthViewStyles.swift in Sources */,
+				D03F23C02EA9BC6000EC8829 /* ViewStyles.swift in Sources */,
 				D03F23C12EA9BC6000EC8829 /* SignUpView.swift in Sources */,
 				D03F23C22EA9BC6000EC8829 /* LoginView.swift in Sources */,
 				D03F23C32EA9BC6000EC8829 /* ForgotPasswordView.swift in Sources */,
