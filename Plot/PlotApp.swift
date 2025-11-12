@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct PlotApp: App {
+    @StateObject private var authVM = AuthViewModel()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView()
+                .environmentObject(authVM)
         }
     }
 }

@@ -4,42 +4,86 @@
 //
 //  Created by Julian Mazzier on 9/19/25.
 //
+
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var authVM: AuthViewModel
     @State private var events: [Event] = []
     @State private var isLoading: Bool = true
-    @State private var isAuthenticated: Bool = false
-    
+
     var body: some View {
-        NavigationStack {
-            if !isAuthenticated {
-                LoginView()
-            } else {
-                if isLoading {
-                    ProgressView("Loading events…")
-                } else {
-                    EventListView(events: events)
+        ZStack {
+            Color("AppBackground").ignoresSafeArea()
+
+            if authVM.isLoading {
+                ProgressView("Loading…")
+                    .tint(Color("AccentColor"))
+            } else if !authVM.isAuthenticated {
+                NavigationStack {
+                    LoginView()
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbarBackground(Color("AppBackground"), for: .navigationBar)
+                        .toolbarBackground(.visible, for: .navigationBar)
                 }
+            } else {
+                TabView {
+                    // HOME
+                    NavigationStack {
+                        HomeView(events: events, isLoading: isLoading)
+                            .navigationTitle("Campus Events")
+                            .navigationBarTitleDisplayMode(.inline)
+                            .toolbarBackground(Color("AppBackground"), for: .navigationBar)
+                            .toolbarBackground(.visible, for: .navigationBar)
+                            .toolbar {
+                                Button("Sign Out") { Task { await authVM.signOut() } }
+                            }
+                    }
+                    .tabItem { Image(systemName: "house.fill"); Text("Home") }
+
+                    // SEARCH
+                    NavigationStack {
+                        SearchView(allEvents: events)
+                            .navigationTitle("Search")
+                            .navigationBarTitleDisplayMode(.inline)
+                            .toolbarBackground(Color("AppBackground"), for: .navigationBar)
+                            .toolbarBackground(.visible, for: .navigationBar)
+                    }
+                    .tabItem { Image(systemName: "magnifyingglass"); Text("Search") }
+
+                    // NOTIFICATIONS
+                    NavigationStack {
+                        NotificationsView()
+                            .navigationTitle("Notifications")
+                            .navigationBarTitleDisplayMode(.inline)
+                            .toolbarBackground(Color("AppBackground"), for: .navigationBar)
+                            .toolbarBackground(.visible, for: .navigationBar)
+                    }
+                    .tabItem { Image(systemName: "bell.fill"); Text("Notifications") }
+                }
+                .tint(Color("AccentColor"))
+                .toolbarBackground(Color("AppBackground"), for: .tabBar)
+                .toolbarBackground(.visible, for: .tabBar)
+                .background(Color("AppBackground").ignoresSafeArea())
             }
         }
-        // MARK: - Exchange URL callback from Supabase
+        .preferredColorScheme(.dark)
+
+        // deep links
         .onOpenURL { url in
             Task {
                 do {
-                  
-                    // Extract the "code" or "access_token" parameter from the deep link
                     if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
                        let queryItems = components.queryItems,
                        let code = queryItems.first(where: { $0.name == "code" || $0.name == "access_token" })?.value {
-                        
-                        try await SupabaseManager.shared.client.auth.exchangeCodeForSession(authCode: code)
+                        _ = try await SupabaseManager.shared.client.auth
+                            .exchangeCodeForSession(authCode: code)
                     } else {
-                        print("❌ Missing auth code in deep‑link URL.")
+                        print("❌ Missing auth code in deep-link URL.")
                     }
-                    // ✅ After the exchange, update state and load events
-                    if await SupabaseManager.shared.isUserAuthenticated() {
-                        isAuthenticated = true
+
+                    await authVM.checkSession()
+                    if authVM.isAuthenticated {
                         isLoading = true
                         events = try await SupabaseManager.shared.fetchEvents()
                         isLoading = false
@@ -50,18 +94,15 @@ struct ContentView: View {
                 }
             }
         }
-        // MARK: - Regular Auth Check (runs when app launches)
+
+        // initial auth/events
         .task {
-            do {
-                isAuthenticated = await SupabaseManager.shared.isUserAuthenticated()
-                
-                if isAuthenticated {
-                    events = try await SupabaseManager.shared.fetchEvents()
-                    isLoading = false
-                }
-            } catch {
-                print("Error loading events:", error)
+            await authVM.checkSession()
+            if authVM.isAuthenticated {
+                do { events = try await SupabaseManager.shared.fetchEvents() }
+                catch { print("Error loading events:", error) }
             }
+            isLoading = false
         }
     }
 }
