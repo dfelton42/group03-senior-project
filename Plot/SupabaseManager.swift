@@ -8,6 +8,9 @@
 import Foundation
 import Supabase
 
+
+
+
 class SupabaseManager {
     static let shared = SupabaseManager()
     let client: SupabaseClient
@@ -29,30 +32,30 @@ class SupabaseManager {
             .execute()
             .value
     }
-    func fetchRsvpStatus(eventId: UUID) async throws -> Bool {
+    func fetchUserEventActions(eventId: UUID) async throws -> [[String: Any]] {
         // TODO: create an AuthService Object so that there are not repeated calls to get user Id
         // TODO: create Client-Side caching for event rsvp status to limit refetches on new event load
         let response = try await client.database
-            .from("rsvps")
+            .from("user_event_actions")
             .select()
             .eq("event_id", value: eventId)
             .eq("user_id", value: client.auth.session.user.id)
             .execute()
         let jsonData = response.data
-        if jsonData.isEmpty { return false}
+        if jsonData.isEmpty { return []}
         
         let decodedObject = try JSONSerialization.jsonObject(with: jsonData, options: [])
             
         guard let rsvpRecords = decodedObject as? [[String: Any]] else {
-            return false
+            return []
         }
         
-        return !rsvpRecords.isEmpty
-
+        return rsvpRecords
     }
+
     func addRsvp(eventId: UUID) async throws {
         try await client.database
-            .from("rsvps")
+            .from("user_event_actions")
             .insert([
                 "event_id": eventId,
                 "user_id": client.auth.session.user.id
@@ -63,12 +66,27 @@ class SupabaseManager {
     
     func removeRsvp(eventId:UUID) async throws {
         try await client.database
-            .from("rsvps")
-            .delete()
+            .from("user_event_actions")
+            .update([
+                "is_attending": false
+            ])
             .eq("event_id", value: eventId)
             .eq("user_id", value: client.auth.session.user.id)
             .execute()
     }
+    func updateUserVoteStatus(eventId: UUID, voteAction: VoteAction) async throws {
+         // Logic to add, update, or remove the vote based on the enum value
+        try await client.database
+            .from("user_event_actions")
+            .update([
+                "is_upvoting": voteAction == VoteAction.upvote,
+                "is_downvoting": voteAction == VoteAction.downvote
+            ])
+            .eq("event_id", value: eventId)
+            .eq("user_id", value: client.auth.session.user.id)
+            .execute()
+    }
+    
     
     // Authentication
     func signUp(email: String, password: String) async throws {
