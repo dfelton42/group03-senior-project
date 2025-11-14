@@ -113,3 +113,4 @@ struct SearchView: View {
         .onAppear { isFocused = true }
     }
 }
+

@@ -16,19 +16,31 @@ struct ContentView: View {
         ZStack {
             Color("AppBackground").ignoresSafeArea()
 
+            //----------------------------------------------------------
+            // LOGIN FLOW
+            //----------------------------------------------------------
             if authVM.isLoading {
                 ProgressView("Loading…")
                     .tint(Color("AccentColor"))
-            } else if !authVM.isAuthenticated {
+            }
+            else if !authVM.isAuthenticated {
+                // LOGIN SCREEN
                 NavigationStack {
                     LoginView()
                         .navigationBarTitleDisplayMode(.inline)
                         .toolbarBackground(Color("AppBackground"), for: .navigationBar)
                         .toolbarBackground(.visible, for: .navigationBar)
                 }
-            } else {
+            }
+            else {
+                //------------------------------------------------------
+                // MAIN APP TABVIEW
+                //------------------------------------------------------
                 TabView {
+
+                    //--------------------------------------------------
                     // HOME
+                    //--------------------------------------------------
                     NavigationStack {
                         HomeView(events: events, isLoading: isLoading)
                             .navigationTitle("Campus Events")
@@ -39,9 +51,14 @@ struct ContentView: View {
                                 Button("Sign Out") { Task { await authVM.signOut() } }
                             }
                     }
-                    .tabItem { Image(systemName: "house.fill"); Text("Home") }
+                    .tabItem {
+                        Image(systemName: "house.fill")
+                        Text("Home")
+                    }
 
+                    //--------------------------------------------------
                     // SEARCH
+                    //--------------------------------------------------
                     NavigationStack {
                         SearchView(allEvents: events)
                             .navigationTitle("Search")
@@ -49,9 +66,14 @@ struct ContentView: View {
                             .toolbarBackground(Color("AppBackground"), for: .navigationBar)
                             .toolbarBackground(.visible, for: .navigationBar)
                     }
-                    .tabItem { Image(systemName: "magnifyingglass"); Text("Search") }
+                    .tabItem {
+                        Image(systemName: "magnifyingglass")
+                        Text("Search")
+                    }
 
+                    //--------------------------------------------------
                     // NOTIFICATIONS
+                    //--------------------------------------------------
                     NavigationStack {
                         NotificationsView()
                             .navigationTitle("Notifications")
@@ -59,7 +81,25 @@ struct ContentView: View {
                             .toolbarBackground(Color("AppBackground"), for: .navigationBar)
                             .toolbarBackground(.visible, for: .navigationBar)
                     }
-                    .tabItem { Image(systemName: "bell.fill"); Text("Notifications") }
+                    .tabItem {
+                        Image(systemName: "bell.fill")
+                        Text("Notifications")
+                    }
+
+                    //--------------------------------------------------
+                    // CHATBOT (NEW TAB)
+                    //--------------------------------------------------
+                    NavigationStack {
+                        ChatBotView()
+                            .navigationTitle("Chat")
+                            .navigationBarTitleDisplayMode(.inline)
+                            .toolbarBackground(Color("AppBackground"), for: .navigationBar)
+                            .toolbarBackground(.visible, for: .navigationBar)
+                    }
+                    .tabItem {
+                        Image(systemName: "bubble.left.and.bubble.right.fill")
+                        Text("Chat")
+                    }
                 }
                 .tint(Color("AccentColor"))
                 .toolbarBackground(Color("AppBackground"), for: .tabBar)
@@ -69,40 +109,61 @@ struct ContentView: View {
         }
         .preferredColorScheme(.dark)
 
-        // deep links
+        //----------------------------------------------------------
+        // DEEP LINK HANDLING
+        //----------------------------------------------------------
         .onOpenURL { url in
             Task {
                 do {
                     if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
                        let queryItems = components.queryItems,
                        let code = queryItems.first(where: { $0.name == "code" || $0.name == "access_token" })?.value {
+
                         _ = try await SupabaseManager.shared.client.auth
                             .exchangeCodeForSession(authCode: code)
-                    } else {
+                    }
+                    else {
                         print("❌ Missing auth code in deep-link URL.")
                     }
 
                     await authVM.checkSession()
+
                     if authVM.isAuthenticated {
                         isLoading = true
                         events = try await SupabaseManager.shared.fetchEvents()
                         isLoading = false
                     }
+
                     print("✅ Supabase session restored via deep link.")
-                } catch {
+                }
+                catch {
                     print("❌ Failed to exchange auth code:", error)
                 }
             }
         }
 
-        // initial auth/events
+        //----------------------------------------------------------
+        // INITIAL LOAD
+        //----------------------------------------------------------
         .task {
             await authVM.checkSession()
+
             if authVM.isAuthenticated {
-                do { events = try await SupabaseManager.shared.fetchEvents() }
-                catch { print("Error loading events:", error) }
+                do {
+                    events = try await SupabaseManager.shared.fetchEvents()
+                }
+                catch {
+                    print("Error loading events:", error)
+                }
             }
+
             isLoading = false
         }
     }
 }
+
+#Preview {
+    ContentView()
+        .environmentObject(AuthViewModel())
+}
+

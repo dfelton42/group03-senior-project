@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3983D60D2EC731F50063CC6E /* PlotChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3983D60C2EC731ED0063CC6E /* PlotChat.swift */; };
 		B3B873AC2E7E2F9C0008FB3A /* PlotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B873AB2E7E2F9C0008FB3A /* PlotApp.swift */; };
 		B3B873AE2E7E2F9C0008FB3A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B873AD2E7E2F9C0008FB3A /* ContentView.swift */; };
 		B3B873B02E7E2F9E0008FB3A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3B873AF2E7E2F9E0008FB3A /* Assets.xcassets */; };
@@ -53,6 +54,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3983D60C2EC731ED0063CC6E /* PlotChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlotChat.swift; sourceTree = "<group>"; };
 		B30191E02EB1755D0042D0AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B3B873A82E7E2F9C0008FB3A /* Plot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Plot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B873AB2E7E2F9C0008FB3A /* PlotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlotApp.swift; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 				D03F23BF2EA9BC6000EC8829 /* Authentication */,
 				B3B873AB2E7E2F9C0008FB3A /* PlotApp.swift */,
 				B3B873AD2E7E2F9C0008FB3A /* ContentView.swift */,
+				3983D60C2EC731ED0063CC6E /* PlotChat.swift */,
 				DED19ACC2EB2F86700526CB5 /* HomeView.swift */,
 				DED19ACE2EB2F87900526CB5 /* NotificationsView.swift */,
 				DED19AD02EB2F89400526CB5 /* SearchView.swift */,
@@ -337,6 +340,7 @@
 				DEE60B2E2EC48194003D2C56 /* AuthViewModel.swift in Sources */,
 				DED19ACD2EB2F86800526CB5 /* HomeView.swift in Sources */,
 				D03F23C02EA9BC6000EC8829 /* AuthViewStyles.swift in Sources */,
+				3983D60D2EC731F50063CC6E /* PlotChat.swift in Sources */,
 				D03F23C12EA9BC6000EC8829 /* SignUpView.swift in Sources */,
 				DED19AD12EB2F89600526CB5 /* SearchView.swift in Sources */,
 				D03F23C22EA9BC6000EC8829 /* LoginView.swift in Sources */,
