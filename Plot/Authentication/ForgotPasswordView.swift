@@ -6,76 +6,58 @@
 //
 
 import SwiftUI
+
 struct ForgotPasswordView: View {
     @State private var email = ""
-    
+    @State private var isBusy = false
+
     var body: some View {
-        VStack(spacing: 25) {
-            Spacer()
-            
-            Text("Forgot password?")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding(.bottom, 20)
-            
-            VStack(spacing: 15) {
-                HStack {
-                    Image(systemName: "envelope.fill")
-                        .foregroundColor(.gray)
+        AuthScaffold(title: "Forgot password?") {
+            VStack(spacing: 16) {
+                HStack(spacing: 10) {
+                    Image(systemName: "envelope.fill").foregroundColor(.white.opacity(0.6))
                     TextField("E-mail", text: $email)
+                        .keyboardType(.emailAddress)
+                        .textContentType(.emailAddress)
+                        .submitLabel(.done)
                 }
-                .modifier(AuthInputFieldStyle())
-            }
-            .padding(.horizontal, 20)
-            
-            Button("Send Reset Link") {
-                Task {
-                    do {
-                        try await SupabaseManager.shared.sendPasswordReset(email: email)
-                        print("📩 Password reset link sent to \(email)")
-                    } catch {
-                        print("❌ Error sending reset link: \(error.localizedDescription)")
+                .authField()
+
+                Button {
+                    Task {
+                        guard !isBusy else { return }
+                        isBusy = true
+                        defer { isBusy = false }
+                        do {
+                            try await SupabaseManager.shared.sendPasswordReset(email: email)
+                            print("📩 Password reset link sent to \(email)")
+                        } catch {
+                            print("❌ Error sending reset link: \(error.localizedDescription)")
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 8) {
+                        if isBusy { ProgressView().tint(.white) }
+                        Text(isBusy ? "Sending…" : "Send Reset Link")
                     }
                 }
-            }
-            .modifier(PrimaryButtonStyle())
-            .padding(.horizontal, 20)
-            .padding(.top, 10)
-            
-            Spacer()
-            
-            // Back to Sign In link
-            HStack(spacing: 5) {
-                Text("Back to")
-                    .foregroundColor(.gray)
-                NavigationLink {
-                    LoginView()
-                } label: {
-                    Text("Sign In")
-                        .fontWeight(.semibold)
-                        .foregroundColor(.purple)
+                .primaryCTA()
+                .padding(.top, 4)
+
+                Spacer()
+
+                HStack(spacing: 6) {
+                    Text("Back to").muted()
+                    NavigationLink { LoginView() } label: {
+                        Text("Sign In")
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("AccentColor"))
+                    }
                 }
+                .font(.callout)
+                .padding(.bottom, 12)
             }
-            .font(.callout)
-            .padding(.bottom, 30)
         }
-        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
-        
     }
 }
-
-// MARK: - 3. SignUpView
-
-
-// MARK: - AuthFlowView (Container for Navigation)
-
-struct AuthFlowView: View {
-    var body: some View {
-        NavigationView {
-          
-            LoginView()
-        }
-    }
-}
-

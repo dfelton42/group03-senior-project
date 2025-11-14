@@ -10,9 +10,10 @@ import MapKit
 
 struct EventDetailView: View {
     let event: Event
-    
     @State private var region: MKCoordinateRegion
-    
+    @State private var attending = false
+    @State private var checking = true
+
     init(event: Event) {
         self.event = event
         _region = State(initialValue: MKCoordinateRegion(
@@ -20,34 +21,84 @@ struct EventDetailView: View {
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         ))
     }
-    
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text(event.title)
-                    .font(.largeTitle)
-                    .bold()
-                
+                    .font(.title.bold())
+                    .foregroundColor(.white)
+
                 Text(event.date, style: .date)
                     .font(.headline)
-                
-                Divider()
-                
+                    .foregroundColor(.white.opacity(0.7))
+
+                Divider().background(Color.white.opacity(0.1))
+
                 Text(event.description)
-                    .font(.body)
-                
-                Divider()
-                
-                Map(coordinateRegion: $region, annotationItems: [event]) { event in
-                    MapMarker(coordinate: event.coordinate, tint: .blue)
+                    .foregroundColor(.white.opacity(0.9))
+
+                Divider().background(Color.white.opacity(0.1))
+
+                Map(position: .constant(.region(region))) {
+                    Annotation(event.title, coordinate: event.coordinate) {
+                        Image(systemName: "mappin.circle.fill")
+                            .font(.title)
+                            .foregroundColor(Color("AccentColor"))
+                            .shadow(radius: 3)
+                    }
                 }
-                .frame(height: 250)
-                .cornerRadius(12)
-                
-                Spacer()
+                .frame(height: 260)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(Color.white.opacity(0.07))
+                )
+                .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 6)
+
+                if checking {
+                    ProgressView("Checking RSVP…")
+                        .tint(Color("AccentColor"))
+                } else if attending {
+                    Button("Cancel RSVP") {
+                        Task {
+                            do {
+                                try await SupabaseManager.shared.removeRsvp(eventId: event.id)
+                                attending = false
+                            } catch {
+                                print("❌ cancel RSVP:", error.localizedDescription)
+                            }
+                        }
+                    }
+                    .modifier(PrimaryButtonStyle(backgroundColor: .white, foregroundColor: .black))
+                } else {
+                    Button("I’m going") {
+                        Task {
+                            do {
+                                try await SupabaseManager.shared.addRsvp(eventId: event.id)
+                                attending = true
+                            } catch {
+                                print("❌ add RSVP:", error.localizedDescription)
+                            }
+                        }
+                    }
+                    .primaryCTA()
+                }
             }
-            .padding()
+            .padding(16)
         }
+        .background(Color("AppBackground").ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Color("AppBackground"), for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .task {
+            do {
+                let status = try await SupabaseManager.shared.fetchRsvpStatus(eventId: event.id)
+                attending = status
+            } catch {
+                attending = false
+            }
+            checking = false
+        }
     }
 }
