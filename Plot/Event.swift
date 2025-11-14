@@ -16,6 +16,8 @@ struct Event: Identifiable, Codable {
     let latitude: Double?
     let longitude: Double?
     let rsvps: Int
+    let upvote_count: Int
+    let downvote_count: Int
 
     // Derived coordinate for MapKit etc.
     var coordinate: CLLocationCoordinate2D {

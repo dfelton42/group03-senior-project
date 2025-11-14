@@ -393,7 +393,9 @@ fileprivate struct SafePressAnimation: ViewModifier {
                     date: Date().addingTimeInterval(3600),
                     latitude: nil,
                     longitude: nil,
-                    rsvps: 42
+                    rsvps: 42,
+                    upvote_count: 10,
+                    downvote_count: 2
                 ),
                 Event(
                     id: UUID(),
@@ -402,7 +404,9 @@ fileprivate struct SafePressAnimation: ViewModifier {
                     date: Date().addingTimeInterval(7200),
                     latitude: nil,
                     longitude: nil,
-                    rsvps: 87
+                    rsvps: 87,
+                    upvote_count: 22,
+                    downvote_count: 1
                 ),
                 Event(
                     id: UUID(),
@@ -411,7 +415,9 @@ fileprivate struct SafePressAnimation: ViewModifier {
                     date: Date().addingTimeInterval(10800),
                     latitude: nil,
                     longitude: nil,
-                    rsvps: 120
+                    rsvps: 120,
+                    upvote_count: 35,
+                    downvote_count: 3
                 )
             ],
             isLoading: false
@@ -419,3 +425,4 @@ fileprivate struct SafePressAnimation: ViewModifier {
     }
     .environmentObject(AuthViewModel())
 }
+
