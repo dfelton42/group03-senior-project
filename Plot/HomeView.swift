@@ -82,7 +82,7 @@ struct HomeView: View {
     private var featuredEvents: [Event] {
         let base = filteredEvents.isEmpty ? events : filteredEvents
         return base
-            .sorted { $0.rsvps > $1.rsvps }
+            .sorted { ($0.rsvps ?? 0) > ($1.rsvps ?? 0) }
             .prefix(6)
             .map { $0 }
     }
@@ -224,7 +224,8 @@ struct HomeView: View {
                         .foregroundColor(.orange.opacity(0.9))
                         .font(.caption)
 
-                    Text("\(e.rsvps) going")
+                    Text("\(e.rsvps ?? 0) going")
+
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.85))
                 }
@@ -394,8 +395,8 @@ fileprivate struct SafePressAnimation: ViewModifier {
                     latitude: nil,
                     longitude: nil,
                     rsvps: 42,
-                    upvote_count: 10,
-                    downvote_count: 2
+                    upvoteCount: 10,
+                    downvoteCount: 2
                 ),
                 Event(
                     id: UUID(),
@@ -405,8 +406,8 @@ fileprivate struct SafePressAnimation: ViewModifier {
                     latitude: nil,
                     longitude: nil,
                     rsvps: 87,
-                    upvote_count: 22,
-                    downvote_count: 1
+                    upvoteCount: 22,
+                    downvoteCount: 1
                 ),
                 Event(
                     id: UUID(),
@@ -416,8 +417,8 @@ fileprivate struct SafePressAnimation: ViewModifier {
                     latitude: nil,
                     longitude: nil,
                     rsvps: 120,
-                    upvote_count: 35,
-                    downvote_count: 3
+                    upvoteCount: 35,
+                    downvoteCount: 3
                 )
             ],
             isLoading: false
