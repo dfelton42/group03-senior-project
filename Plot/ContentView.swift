@@ -50,6 +50,30 @@ struct ContentView: View {
                             .toolbarBackground(.visible, for: .navigationBar)
                     }
                     .tabItem { Image(systemName: "magnifyingglass"); Text("Search") }
+                    
+                    // CREATE EVENT
+                    NavigationStack {
+                        CreateEventView {
+                            Task {
+                                do {
+                                    let newEvents = try await SupabaseManager.shared.fetchEvents()
+                                    await MainActor.run {
+                                        events = newEvents   // ensures UI actually refreshes
+                                    }
+                                } catch {
+                                    print("Reload error:", error)
+                                }
+                            }
+                        }
+                        .navigationTitle("Create Event")                        
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbarBackground(Color("AppBackground"), for: .navigationBar)
+                        .toolbarBackground(.visible, for: .navigationBar)
+                    }
+                    .tabItem {
+                        Image(systemName: "plus.circle.fill")
+                        Text("Create")
+                    }
 
                     // NOTIFICATIONS
                     NavigationStack {

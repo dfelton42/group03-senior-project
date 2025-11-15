@@ -19,18 +19,50 @@ class SupabaseManager {
         )
     }
 
-    // MARK: - Database
-
     func fetchEvents() async throws -> [Event] {
         try await client.database
             .from("events")
             .select()
             .order("date", ascending: true)
             .execute()
-            .value
+            .value as [Event]
     }
 
-    // MARK: - RSVP (note the awaited session.user.id)
+    func createEvent(
+        title: String,
+        description: String,
+        date: Date,
+        latitude: Double?,
+        longitude: Double?,
+        rsvps: Int = 0
+    ) async throws {
+        struct NewEvent: Encodable {
+            let id: UUID
+            let title: String
+            let description: String
+            let date: Date
+            let latitude: Double?
+            let longitude: Double?
+            let rsvps: Int
+        }
+
+        let event = NewEvent(
+            id: UUID(),
+            title: title,
+            description: description,
+            date: date,
+            latitude: latitude,
+            longitude: longitude,
+            rsvps: rsvps
+        )
+
+        try await client.database
+            .from("events")
+            .insert([event])
+            .execute()
+        
+        
+    }
 
     func fetchRsvpStatus(eventId: UUID) async throws -> Bool {
         let session = try await client.auth.session
@@ -68,8 +100,6 @@ class SupabaseManager {
             .eq("user_id", value: session.user.id)
             .execute()
     }
-
-    // MARK: - Auth
 
     func signUp(email: String, password: String) async throws {
         guard email.lowercased().hasSuffix("@lion.lmu.edu") else {

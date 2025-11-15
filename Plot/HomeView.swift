@@ -14,6 +14,8 @@ struct HomeView: View {
     var body: some View {
         ZStack {
             Color("AppBackground").ignoresSafeArea()
+            
+            
 
             if isLoading {
                 VStack(spacing: 12) {
@@ -29,5 +31,6 @@ struct HomeView: View {
                     .background(Color("AppBackground"))
             }
         }
+        
     }
 }
