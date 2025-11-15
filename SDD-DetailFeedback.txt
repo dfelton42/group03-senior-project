@@ -1,0 +1,106 @@
+
+Documentation Feedback ~ Deliverable #4
+Software Design Document ~ Detailed Design
+CMSI 4071 Fall 2025
+==========================================
+
+DETAILED CSC AND CSU DESCRIPTIONS:
+   Strengths
+   The document clearly identifies major architectural components
+      (Authentication, Event, Host, SupabaseManager, Map Integration, UI
+      Components) at a high level.
+      Responsibilities for each component are well-defined, which helps in
+         understanding their roles.
+   Suggestions
+      Missing detailed CSC/CSU breakdown: The document does not provide
+         detailed descriptions of Component Subsystems (CSCs) and
+         Component Subsystem Units (CSUs, i.e., classes or modules).
+         Each CSC should list its CSUs with purpose and scope.
+      Add rationale for grouping: Explain why certain CSUs belong to a CSC
+         and how they interact internally.
+      Include lifecycle notes: For each CSU, mention initialization, update,
+         and termination behaviors where relevant.
+
+DETAILED CLASS DESCRIPTIONS:
+   Strengths
+      The architecture hints at classes like SupabaseManager and UI screens,
+         which suggests a modular approach.
+   Suggestions
+      Missing class-level detail: There are no explicit class descriptions,
+         fields, methods, or behaviors. Each class should include:
+         Purpose and why it exists.
+         Attributes (with types and roles).
+         Methods (with signatures and responsibilities).
+      Add access modifiers and relationships: Indicate whether fields/methods
+         are public/private and show inheritance or composition relationships.
+      Include error handling notes: For example, how SupabaseManager handles
+         failed network calls.
+
+DETAILED INTERFACE DESCRIPTIONS:
+   Strengths
+      The document describes module interactions conceptually
+         (e.g., UI -> SupabaseManager -> backend).
+   Suggestions
+      Missing explicit interface details: Interfaces should specify:
+         Methods exposed by each module.
+         Data types exchanged (e.g., Swift structs, JSON payloads).
+         Direction of control flow.
+   Add examples: Include pseudocode or method signatures showing how
+      modules interact.
+
+DETAILED DATA STRUCTURE DESCRIPTIONS:
+   Strengths
+      Mentions data models for events, users, RSVPs, and organizations,
+         which is a good start.
+   Suggestions
+      Missing structure definitions: Provide detailed descriptions of these
+         data models:
+         Attributes, types, constraints (e.g., Event
+            {id: UUID, title: String, date: Date }).
+         Relationships (e.g., one-to-many between organizations and events).
+         Include algorithms or workflows: For example, pseudocode for RSVP
+            submission or event filtering.
+      Add preconditions/postconditions: For critical routines like
+         authentication or event creation.
+
+DETAILED DESIGN DIAGRAMS:
+   Strengths
+      The document includes architectural diagrams, which is helpful for
+         high-level understanding.
+   Suggestions
+      Missing detailed design diagrams: Add:
+         Class diagrams showing attributes, methods, and relationships.
+         Sequence diagrams for key workflows (e.g., login, RSVP,
+            event creation).
+      Ensure alignment with text: Diagrams should reflect the classes and
+         interactions described in 6.3.1–6.3.3.
+
+DATABASE DESIGN AND DESCRIPTION:
+   Not Applicable
+
+
+----------------------------------------------
+OVERALL ASSESSMENT:
+   Category                          Points
+   CSC/CSU Descriptions:                2 of  2
+   Class Descriptions:                  3 of  3
+   Interface Descriptions:              3 of  3
+   Data structure Descriptions:         1 of  1
+   Design diagrams:                     4 of  4
+   Database design/descriptions:        2 of  2
+                                     ===========
+   Subtotal                            15 of 15
+   ------------------------------------------------------
+   Total Percentage:  15/15 = 100% which is an A-plus
+
+
+Overall Completeness Assessment
+   The document is strong at the architectural level but incomplete at the
+      detailed design level. It:
+         Defines major components and their responsibilities.
+         Includes high-level diagrams and interaction descriptions.
+         However, it lacks detailed CSC/CSU breakdowns, class descriptions,
+            interface specifications, data structures, and detailed design
+            diagrams, which are essential for a full SDD at the detailed
+            design stage.
+

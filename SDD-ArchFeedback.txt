@@ -1,0 +1,109 @@
+
+Documentation Feedback ~ Deliverable #4
+Software Design Document ~ Architecture
+CMSI 4071 Fall 2025
+=======================================
+
+INTRODUCTION SECTION:
+   System objectives section
+   Hardware, software, and human interfaces section
+Both are fine.
+
+ARCHITECTURAL DESIGN SECTION:
+   Strengths
+      Clear modular separation: The architecture emphasizes separation of
+         concerns (UI, data models, SupabaseManager, map module), which
+         supports maintainability and scalability.
+      Technology stack clarity: Mentions SwiftUI, Supabase SDK, PostgreSQL,
+         and Google Maps SDK, showing strong alignment with iOS development
+         best practices.
+      Low coupling and rationale: Explicitly states the goal of reducing
+         dependencies between modules, which is a key architectural principle.
+   Suggestions
+      Add rationale for architectural style: While modularity is mentioned,
+         explicitly stating whether this follows MVC, MVVM, or another
+            pattern would improve clarity.
+      Include non-functional considerations: Performance, security, and
+         scalability aspects could be briefly addressed to strengthen
+         architectural justification.
+      Expand on data flow: A short summary of how data moves from
+         UI -> SupabaseManager -> backend and back would make this section
+         more complete.
+
+   Major softwre components section
+      Strengths
+         Comprehensive component list: Covers Authentication, Event, Host,
+            SupabaseManager, Map Integration, and UI components.
+         Responsibilities clearly defined: Each component’s role is described
+            in terms of functionality (e.g., Authentication for secure login,
+            Event module for browsing and filtering).
+         Alignment with functional requirements: Components map well to core
+            app features like event discovery, RSVP, and host management.
+      Suggestions
+         Add explicit traceability: Include a mapping between components and
+            functional requirements (e.g., FR 5.2.x) for better compliance
+            with SDD standards.
+         Clarify component boundaries: For example, does the Event module
+            handle caching or is that part of SupabaseManager? Adding these
+            details would reduce ambiguity.
+         Include scalability notes: Indicate how components like
+            SupabaseManager will handle increased load or future features
+            (e.g., notifications).
+
+   Major software interactions section
+      Strengths
+         Interaction flow explained: Describes how Authentication interacts
+            with Supabase, how Event and Map modules share data, and how Host
+            actions propagate through SupabaseManager.
+         Future extensibility noted: Mentions planned integration with APNS
+            for notifications, showing foresight.
+      Suggestions
+         Add sequence diagrams or flowcharts: Visual representation of
+            interactions (e.g., login flow, event creation) would make this
+            section stronger.
+         Clarify error handling and edge cases: For example, what happens if
+            SupabaseManager fails to retrieve data? Including fallback
+            strategies would improve robustness.
+         Include data exchange details: Specify what data structures or
+            formats are passed between modules (e.g., JSON payloads, Swift
+            structs).
+
+   Architectural design diagrams section
+      Strengths
+         Diagrams included: The document provides architectural diagrams,
+            which is essential for visualizing relationships.
+         High-level clarity: The diagrams appear to show module
+            relationships and possibly data flow.
+      Suggestions
+         Add labels and legends: Ensure diagrams clearly indicate
+            components, interactions, and data flow directions.
+         Include multiple views: Consider adding both a component diagram
+            and a deployment diagram for completeness.
+         Verify alignment with text: Ensure the diagrams match the
+            descriptions in 6.2 and 6.2.2 (e.g., SupabaseManager as
+            central hub).
+
+
+OVERALL ASSESSMENT:
+   Category                          Points
+   INTRODUCTION                         1
+   System objectives                    1
+   H/W, S/W, Human I/F                  1
+
+   ARCHITECTURAL DESIGN SECTION:
+   Major softwre components             1
+   Major software interactions          1
+   Architectural design diagrams        5
+
+                                     ======
+   Subtotal                            10
+   ------------------------------------------------------
+   Total Percentage:  10/10 = 100% which is an A-plus
+
+Overall Completeness Assessment
+   The document is strong and mostly complete at the architectural design
+      level for a Waterfall or Agile SDD. It:
+         Defines major components and their responsibilities.
+         Explains interactions and includes diagrams.
+         Shows awareness of modularity and future extensibility.
+
