@@ -13,6 +13,8 @@ struct EventDetailView: View {
     @State private var region: MKCoordinateRegion
     @State private var attending = false
     @State private var checking = true
+    
+    @StateObject private var locationManager = LocationManager()
 
     init(event: Event) {
         self.event = event
@@ -84,6 +86,28 @@ struct EventDetailView: View {
                     }
                     .primaryCTA()
                 }
+
+                // MARK: - USER LOCATION SECTION
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Your Location:")
+                        .font(.headline)
+                        .foregroundColor(.white)
+
+                    if locationManager.isAuthorized {
+                        if let loc = locationManager.userLocation {
+                            Text("Lat: \(loc.latitude), Lon: \(loc.longitude)")
+                                .foregroundColor(.white.opacity(0.7))
+                        } else {
+                            Text("Locating…")
+                                .foregroundColor(.white.opacity(0.7))
+                        }
+                    } else {
+                        Text("Location access not granted.")
+                            .foregroundColor(.white.opacity(0.5))
+                    }
+                }
+                .padding(.top, 12)
+
             }
             .padding(16)
         }
@@ -92,6 +116,10 @@ struct EventDetailView: View {
         .toolbarBackground(Color("AppBackground"), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .task {
+            // Request location immediately
+            locationManager.requestLocation()
+
+            // Fetch RSVP status
             do {
                 let status = try await SupabaseManager.shared.fetchRsvpStatus(eventId: event.id)
                 attending = status
@@ -102,3 +130,4 @@ struct EventDetailView: View {
         }
     }
 }
+
