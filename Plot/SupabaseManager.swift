@@ -8,6 +8,10 @@
 import Foundation
 import Supabase
 
+extension Notification.Name {
+    static let eventsDidChange = Notification.Name("eventsDidChange")
+}
+
 class SupabaseManager {
     static let shared = SupabaseManager()
     let client: SupabaseClient
@@ -18,7 +22,8 @@ class SupabaseManager {
             supabaseURL: URL(string: "https://zffnbseyutdajtkhmgvl.supabase.co")!,
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmZm5ic2V5dXRkYWp0a2htZ3ZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3ODYzODQsImV4cCI6MjA3NTM2MjM4NH0.r4z5R9gufafrMQ_HvHbb9Yna0a5zlv1244v4tD-wWUU"
         )
-    }
+    }    
+    
 
     // MARK: - Events
 
@@ -152,6 +157,31 @@ class SupabaseManager {
             .execute()
     }
 
+    // MARK: - RSVP Count Updates
+    func incrementRsvpCount(for eventId: UUID) async throws {
+        try await client.database
+            .rpc("increment_rsvp_count", params: ["event_id": eventId.uuidString])
+            .execute()
+    }
+
+    func decrementRsvpCount(for eventId: UUID) async throws {
+        try await client.database
+            .rpc("decrement_rsvp_count", params: ["event_id": eventId.uuidString])
+            .execute()
+    }
+
+    // MARK: - Upvote/Downvote Count Updates
+    func incrementUpvote(for eventId: UUID) async throws {
+        try await client.database
+            .rpc("increment_upvote_count", params: ["event_id": eventId.uuidString])
+            .execute()
+    }
+
+    func incrementDownvote(for eventId: UUID) async throws {
+        try await client.database
+            .rpc("increment_downvote_count", params: ["event_id": eventId.uuidString])
+            .execute()
+    }
     // MARK: - Authentication
 
     func signUp(email: String, password: String) async throws {

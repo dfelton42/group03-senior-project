@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B33C7E642ECB10C500D06730 /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33C7E632ECB10C500D06730 /* EventStore.swift */; };
+		B33C7E662ECB14FB00D06730 /* EventCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33C7E652ECB14FB00D06730 /* EventCategory.swift */; };
 		B3B873AC2E7E2F9C0008FB3A /* PlotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B873AB2E7E2F9C0008FB3A /* PlotApp.swift */; };
 		B3B873AE2E7E2F9C0008FB3A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B873AD2E7E2F9C0008FB3A /* ContentView.swift */; };
 		B3B873B02E7E2F9E0008FB3A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3B873AF2E7E2F9E0008FB3A /* Assets.xcassets */; };
@@ -57,6 +59,8 @@
 
 /* Begin PBXFileReference section */
 		B30191E02EB1755D0042D0AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B33C7E632ECB10C500D06730 /* EventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
+		B33C7E652ECB14FB00D06730 /* EventCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCategory.swift; sourceTree = "<group>"; };
 		B3B873A82E7E2F9C0008FB3A /* Plot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Plot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B873AB2E7E2F9C0008FB3A /* PlotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlotApp.swift; sourceTree = "<group>"; };
 		B3B873AD2E7E2F9C0008FB3A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -142,6 +146,7 @@
 				B30191E02EB1755D0042D0AF /* Info.plist */,
 				D03F23BF2EA9BC6000EC8829 /* Authentication */,
 				B3B873AB2E7E2F9C0008FB3A /* PlotApp.swift */,
+				B33C7E652ECB14FB00D06730 /* EventCategory.swift */,
 				B3B873AD2E7E2F9C0008FB3A /* ContentView.swift */,
 				DEE60B2F2ECABD1B003D2C56 /* PlotChat.swift */,
 				DED19ACC2EB2F86700526CB5 /* HomeView.swift */,
@@ -156,6 +161,7 @@
 				D145CE3A2EC8518F00799A11 /* LocationManager.swift */,
 				B3B873DB2E7E30900008FB3A /* SupabaseManager.swift */,
 				B3DCF4F72EC8538400AF19F6 /* CreateEventView.swift */,
+				B33C7E632ECB10C500D06730 /* EventStore.swift */,
 			);
 			path = Plot;
 			sourceTree = "<group>";
@@ -343,10 +349,12 @@
 				B3B873DA2E7E305E0008FB3A /* EventDetailView.swift in Sources */,
 				B3B873D62E7E301D0008FB3A /* Event.swift in Sources */,
 				B3B873DC2E7E30900008FB3A /* SupabaseManager.swift in Sources */,
+				B33C7E642ECB10C500D06730 /* EventStore.swift in Sources */,
 				D145CE3B2EC8519400799A11 /* LocationManager.swift in Sources */,
 				B3B873AC2E7E2F9C0008FB3A /* PlotApp.swift in Sources */,
 				DEE60B2E2EC48194003D2C56 /* AuthViewModel.swift in Sources */,
 				DEE60B302ECABD1E003D2C56 /* PlotChat.swift in Sources */,
+				B33C7E662ECB14FB00D06730 /* EventCategory.swift in Sources */,
 				DED19ACD2EB2F86800526CB5 /* HomeView.swift in Sources */,
 				D03F23C02EA9BC6000EC8829 /* AuthViewStyles.swift in Sources */,
 				D03F23C12EA9BC6000EC8829 /* SignUpView.swift in Sources */,

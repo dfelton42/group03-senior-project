@@ -9,8 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var authVM: AuthViewModel
-    @State private var events: [Event] = []
-    @State private var isLoading: Bool = true
+    @EnvironmentObject var eventStore: EventStore
 
     var body: some View {
         ZStack {
@@ -19,7 +18,6 @@ struct ContentView: View {
             if authVM.isLoading {
                 ProgressView("Loading…")
                     .tint(Color("AccentColor"))
-
             } else if !authVM.isAuthenticated {
                 NavigationStack {
                     LoginView()
@@ -27,12 +25,11 @@ struct ContentView: View {
                         .toolbarBackground(Color("AppBackground"), for: .navigationBar)
                         .toolbarBackground(.visible, for: .navigationBar)
                 }
-
             } else {
                 TabView {
-                    // HOME
+                    // 🏠 HOME
                     NavigationStack {
-                        HomeView(events: events, isLoading: isLoading)
+                        HomeView()
                             .navigationTitle("Campus Events")
                             .navigationBarTitleDisplayMode(.inline)
                             .toolbarBackground(Color("AppBackground"), for: .navigationBar)
@@ -48,9 +45,9 @@ struct ContentView: View {
                         Text("Home")
                     }
 
-                    // SEARCH
+                    // 🔍 SEARCH
                     NavigationStack {
-                        SearchView(allEvents: events)
+                        SearchView()
                             .navigationTitle("Search")
                             .navigationBarTitleDisplayMode(.inline)
                             .toolbarBackground(Color("AppBackground"), for: .navigationBar)
@@ -61,19 +58,10 @@ struct ContentView: View {
                         Text("Search")
                     }
 
-                    // CREATE EVENT
+                    // ➕ CREATE
                     NavigationStack {
                         CreateEventView {
-                            Task {
-                                do {
-                                    let newEvents = try await SupabaseManager.shared.fetchEvents()
-                                    await MainActor.run {
-                                        events = newEvents
-                                    }
-                                } catch {
-                                    print("Reload error:", error)
-                                }
-                            }
+                            Task { await eventStore.fetch() }
                         }
                         .navigationTitle("Create Event")
                         .navigationBarTitleDisplayMode(.inline)
@@ -85,7 +73,7 @@ struct ContentView: View {
                         Text("Create")
                     }
 
-                    // NOTIFICATIONS
+                    // 🔔 NOTIFICATIONS
                     NavigationStack {
                         NotificationsView()
                             .navigationTitle("Notifications")
@@ -98,7 +86,7 @@ struct ContentView: View {
                         Text("Notifications")
                     }
 
-                    // CHAT
+                    // 💬 CHAT
                     NavigationStack {
                         ChatBotView()
                             .navigationTitle("Chat")
@@ -118,57 +106,13 @@ struct ContentView: View {
             }
         }
         .preferredColorScheme(.dark)
-
-        // MARK: - Handle Supabase OAuth / Magic Link Deep Links
-        .onOpenURL { url in
-            Task {
-                do {
-                    if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-                       let queryItems = components.queryItems,
-                       let code = queryItems.first(where: { $0.name == "code" || $0.name == "access_token" })?.value {
-
-                        _ = try await SupabaseManager.shared.client.auth
-                            .exchangeCodeForSession(authCode: code)
-                    } else {
-                        print("❌ Missing auth code in deep-link URL.")
-                    }
-
-                    await authVM.checkSession()
-
-                    if authVM.isAuthenticated {
-                        let newEvents = try await SupabaseManager.shared.fetchEvents()
-                        await MainActor.run {
-                            isLoading = true
-                            events = newEvents
-                            isLoading = false
-                        }
-                    }
-
-                    print("✅ Supabase session restored via deep link.")
-
-                } catch {
-                    print("❌ Failed to exchange auth code:", error)
-                }
-            }
-        }
-
-        // MARK: - Initial Auth + Events Load
         .task {
+            // Initialize auth + load events
             await authVM.checkSession()
 
             if authVM.isAuthenticated {
-                do {
-                    let newEvents = try await SupabaseManager.shared.fetchEvents()
-                    await MainActor.run {
-                        events = newEvents
-                    }
-                } catch {
-                    print("Error loading events:", error)
-                }
-            }
-
-            await MainActor.run {
-                isLoading = false
+                await eventStore.fetch()
+                eventStore.refreshOnNotification() // Listen for .eventsDidChange
             }
         }
     }

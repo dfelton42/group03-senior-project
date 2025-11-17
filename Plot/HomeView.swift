@@ -5,21 +5,20 @@
 //  Created by Christopher Chatel on 10/15/25.
 //
 
+
 import SwiftUI
 
 struct HomeView: View {
-    let events: [Event]
-    let isLoading: Bool
-
+    @EnvironmentObject var eventStore: EventStore
     @State private var selectedCategory: EventCategory = .all
 
     var body: some View {
         ZStack {
             Color("AppBackground").ignoresSafeArea()
 
-            if isLoading {
+            if eventStore.isLoading {
                 loadingState
-            } else if events.isEmpty {
+            } else if eventStore.events.isEmpty {
                 emptyState
             } else {
                 ScrollView {
@@ -28,7 +27,7 @@ struct HomeView: View {
                         // CATEGORY CHIPS
                         categoryChips
 
-                        // TRENDING CAROUSEL (uses real events)
+                        // TRENDING SECTION
                         if !featuredEvents.isEmpty {
                             trendingSection
                         }
@@ -63,14 +62,13 @@ struct HomeView: View {
     }
 
     // MARK: - Derived Data
-
     private var categorizedEvents: [(event: Event, category: EventCategory)] {
-        events.map { ($0, EventCategory.forEvent($0)) }
+        eventStore.events.map { ($0, EventCategory.forEvent($0)) }
     }
 
     private var filteredEvents: [Event] {
         if selectedCategory == .all {
-            return events.sorted { $0.date < $1.date }
+            return eventStore.events.sorted { $0.date < $1.date }
         }
         return categorizedEvents
             .filter { $0.category == selectedCategory }
@@ -78,57 +76,43 @@ struct HomeView: View {
             .sorted { $0.date < $1.date }
     }
 
-    /// Trending: highest RSVPs within selected category (or all),
-    /// breaking ties by most recent date.
     private var featuredEvents: [Event] {
-        let base = filteredEvents.isEmpty ? events : filteredEvents
-
+        let base = filteredEvents.isEmpty ? eventStore.events : filteredEvents
         let sorted = base.sorted { lhs, rhs in
             let lhsR = lhs.rsvps ?? 0
             let rhsR = rhs.rsvps ?? 0
-
             if lhsR == rhsR {
-                // same RSVPs -> newer event first
                 return lhs.date > rhs.date
             }
             return lhsR > rhsR
         }
-
         return Array(sorted.prefix(6))
     }
 
     private var allEventsHeader: String {
-        if selectedCategory == .all {
-            return "All Events"
-        } else {
-            return "All \(selectedCategory.displayName) Events"
-        }
+        selectedCategory == .all ? "All Events" : "All \(selectedCategory.displayName) Events"
     }
 
-    // MARK: - Loading
+    // MARK: - Loading & Empty States
     var loadingState: some View {
         VStack(spacing: 12) {
             ProgressView()
                 .progressViewStyle(.circular)
                 .tint(Color("AccentColor"))
-
             Text("Loading events…")
                 .font(.subheadline)
                 .foregroundColor(.white.opacity(0.7))
         }
     }
 
-    // MARK: - Empty State
     var emptyState: some View {
         VStack(spacing: 16) {
             Image(systemName: "calendar.badge.exclamationmark")
                 .font(.system(size: 50))
                 .foregroundColor(.white.opacity(0.4))
-
             Text("No events found")
                 .font(.title3.bold())
                 .foregroundColor(.white)
-
             Text("Check back soon — new events update automatically.")
                 .font(.subheadline)
                 .foregroundColor(.white.opacity(0.6))
@@ -139,7 +123,6 @@ struct HomeView: View {
     }
 
     // MARK: - Category Chips
-
     var categoryChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
@@ -181,198 +164,154 @@ struct HomeView: View {
     }
 
     // MARK: - Trending Section
-
     var trendingSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("Trending Now")
                     .font(.headline)
                     .foregroundColor(.white.opacity(0.95))
-
                 Spacer()
-
                 Text("Top \(featuredEvents.count)")
                     .font(.caption)
                     .foregroundColor(.white.opacity(0.7))
             }
             .padding(.horizontal, 16)
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 14) {
-                    ForEach(featuredEvents) { event in
-                        trendingCard(event)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 14) {
+                                ForEach(featuredEvents) { event in
+                                    trendingCard(event)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                        }
                     }
                 }
-                .padding(.horizontal, 16)
-            }
-        }
-    }
 
-    func trendingCard(_ e: Event) -> some View {
-        NavigationLink {
-            EventDetailView(event: e)
-        } label: {
-            VStack(alignment: .leading, spacing: 8) {
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(
-                        LinearGradient(
-                            colors: [.purple.opacity(0.8), .pink.opacity(0.8)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .overlay(
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(e.title)
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .lineLimit(2)
+                // MARK: - Trending Card
+                func trendingCard(_ e: Event) -> some View {
+                    NavigationLink {
+                        EventDetailView(event: e)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 8) {
+                            RoundedRectangle(cornerRadius: 18)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [.purple.opacity(0.8), .pink.opacity(0.8)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .overlay(
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(e.title)
+                                            .font(.headline)
+                                            .foregroundColor(.white)
+                                            .lineLimit(2)
 
-                            Text(e.date.formatted(date: .abbreviated, time: .shortened))
-                                .font(.caption)
-                                .foregroundColor(.white.opacity(0.9))
+                                        Text(e.date.formatted(date: .abbreviated, time: .shortened))
+                                            .font(.caption)
+                                            .foregroundColor(.white.opacity(0.9))
+                                    }
+                                    .padding(10)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                )
+                                .frame(width: 220, height: 120)
+
+                            HStack(spacing: 6) {
+                                Image(systemName: "flame.fill")
+                                    .foregroundColor(.orange.opacity(0.9))
+                                    .font(.caption)
+
+                                Text("\(e.rsvps ?? 0) going")
+                                    .font(.caption)
+                                    .foregroundColor(.white.opacity(0.85))
+                            }
                         }
                         .padding(10)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    )
-                    .frame(width: 220, height: 120)
-
-                HStack(spacing: 6) {
-                    Image(systemName: "flame.fill")
-                        .foregroundColor(.orange.opacity(0.9))
-                        .font(.caption)
-
-                    // REAL RSVP COUNT
-                    Text("\(e.rsvps ?? 0) going")
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.85))
-                }
-            }
-            .padding(10)
-            .background(Color.white.opacity(0.06))
-            .cornerRadius(20)
-            .shadow(color: .black.opacity(0.35), radius: 10, x: 0, y: 5)
-        }
-        .buttonStyle(.plain)   // keep navigation smooth
-    }
-
-    // MARK: - Main Event Card (Vertical Feed)
-
-    func eventCard(_ e: Event) -> some View {
-        NavigationLink {
-            EventDetailView(event: e)
-        } label: {
-            VStack(alignment: .leading, spacing: 14) {
-
-                // Premium Gradient Header
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(
-                        LinearGradient(
-                            colors: [.blue.opacity(0.75), .purple.opacity(0.75)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .overlay(
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(e.title)
-                                .font(.title2.bold())
-                                .foregroundColor(.white)
-                                .shadow(radius: 6)
-
-                            Text(e.date.formatted(date: .abbreviated, time: .shortened))
-                                .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.9))
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    )
-                    .frame(height: 160)
-                    .shadow(color: .black.opacity(0.35), radius: 10, x: 0, y: 5)
-
-                // Description Area
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(e.description)
-                        .font(.subheadline)
-                        .foregroundColor(.white.opacity(0.75))
-                        .lineLimit(3)
-
-                    HStack(spacing: 8) {
-                        Image(systemName: "person.2.fill")
-                            .foregroundColor(.white.opacity(0.6))
-
-                        // REAL RSVP COUNT
-                        Text("\(e.rsvps ?? 0) RSVPs")
-                            .foregroundColor(.white.opacity(0.6))
-                            .font(.caption)
+                        .background(Color.white.opacity(0.06))
+                        .cornerRadius(20)
+                        .shadow(color: .black.opacity(0.35), radius: 10, x: 0, y: 5)
                     }
+                    .buttonStyle(.plain)
                 }
-                .padding(.horizontal, 4)
 
+                // MARK: - Main Event Card (Vertical Feed)
+                func eventCard(_ e: Event) -> some View {
+                    NavigationLink {
+                        EventDetailView(event: e)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 14) {
+
+                            // HEADER
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [.blue.opacity(0.75), .purple.opacity(0.75)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .overlay(
+                                    VStack(alignment: .leading, spacing: 6) {
+                                        Text(e.title)
+                                            .font(.title2.bold())
+                                            .foregroundColor(.white)
+                                            .shadow(radius: 6)
+
+                                        Text(e.date.formatted(date: .abbreviated, time: .shortened))
+                                            .font(.subheadline)
+                                            .foregroundColor(.white.opacity(0.9))
+                                    }
+                                    .padding()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                )
+                                .frame(height: 160)
+                                .shadow(color: .black.opacity(0.35), radius: 10, x: 0, y: 5)
+
+                            // DESCRIPTION AREA
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(e.description)
+                                    .font(.subheadline)
+                                    .foregroundColor(.white.opacity(0.75))
+                                    .lineLimit(3)
+
+                                HStack(spacing: 12) {
+                                    // RSVP COUNT
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "person.2.fill")
+                                            .foregroundColor(.white.opacity(0.6))
+                                        Text("\(e.rsvps ?? 0) RSVPs")
+                                            .foregroundColor(.white.opacity(0.6))
+                                            .font(.caption)
+                                    }
+
+                                    // UPVOTES
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "arrow.up.circle.fill")
+                                            .foregroundColor(.white.opacity(0.6))
+                                        let netVotes = (e.upvote_count ?? 0) - (e.downvote_count ?? 0)
+                                        Text("\(netVotes)")
+                                            .font(.caption)
+                                            .foregroundColor(netVotes >= 0 ? .white.opacity(0.7) : .red.opacity(0.8))
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 4)
+                        }
+                        .padding(16)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(24)
+                        .shadow(color: .black.opacity(0.25), radius: 12, x: 0, y: 6)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
-            .padding(16)
-            .background(.ultraThinMaterial)
-            .cornerRadius(24)
-            .shadow(color: .black.opacity(0.25), radius: 12, x: 0, y: 6)
-        }
-        .buttonStyle(.plain)   // keep scrolling smooth
-    }
-}
 
-
-// MARK: - EventCategory
-
-enum EventCategory: CaseIterable, Equatable {
-    case all
-    case parties
-    case sports
-    case greek
-    case concerts
-    case other
-
-    var displayName: String {
-        switch self {
-        case .all: return "All"
-        case .parties: return "Parties"
-        case .sports: return "Sports"
-        case .greek: return "Greek Life"
-        case .concerts: return "Concerts"
-        case .other: return "Other"
-        }
-    }
-
-    var icon: String? {
-        switch self {
-        case .all: return "sparkles"
-        case .parties: return "wineglass.fill"
-        case .sports: return "sportscourt.fill"
-        case .greek: return "building.columns.fill"
-        case .concerts: return "music.note.list"
-        case .other: return "square.grid.2x2.fill"
-        }
-    }
-
-    static func forEvent(_ e: Event) -> EventCategory {
-        let text = (e.title + " " + e.description).lowercased()
-
-        if text.contains("party") || text.contains("afterparty") || text.contains("bash")
-            || text.contains("mixer") || text.contains("kickoff") || text.contains("bonfire") {
-            return .parties
-        }
-        if text.contains("hockey") || text.contains("basketball") || text.contains("soccer")
-            || text.contains("tennis") || text.contains("softball") || text.contains("lacrosse")
-            || text.contains("swim") {
-            return .sports
-        }
-        if text.contains("alpha") || text.contains("beta") || text.contains("gamma")
-            || text.contains("delta") || text.contains("sigma") || text.contains("kappa")
-            || text.contains("zeta") {
-            return .greek
-        }
-        if text.contains("concert") || text.contains("dj")
-            || text.contains("music") || text.contains("band") {
-            return .concerts
-        }
-        return .other
-    }
-}
+            #Preview {
+                NavigationStack {
+                    HomeView()
+                        .environmentObject(EventStore())
+                        .preferredColorScheme(.dark)
+                }
+            }

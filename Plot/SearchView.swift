@@ -3,21 +3,20 @@
 //  Plot
 //
 //  Created by Christopher Chatel on 10/15/25.
-//
 
 import SwiftUI
 
 struct SearchView: View {
-    let allEvents: [Event]
-
+    @EnvironmentObject var eventStore: EventStore
     @State private var query = ""
     @FocusState private var isFocused: Bool
 
-    // Filter events by title
+    // MARK: - Filtered Events
     private var filtered: [Event] {
         let q = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !q.isEmpty else { return allEvents }
-        return allEvents.filter { $0.title.localizedCaseInsensitiveContains(q) }
+        let events = eventStore.events
+        guard !q.isEmpty else { return events }
+        return events.filter { $0.title.localizedCaseInsensitiveContains(q) }
     }
 
     var body: some View {
@@ -26,7 +25,7 @@ struct SearchView: View {
 
             ScrollView {
                 VStack(spacing: 16) {
-                    // Custom rounded search bar
+                    // MARK: - Search Bar
                     HStack(spacing: 8) {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.white.opacity(0.6))
@@ -59,14 +58,16 @@ struct SearchView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
 
-                    // Search results or placeholder text
+                    // MARK: - Search Results / Empty State
                     if filtered.isEmpty {
                         VStack(spacing: 8) {
                             Image(systemName: "text.magnifyingglass")
                                 .font(.system(size: 28, weight: .semibold))
                                 .foregroundColor(.white.opacity(0.5))
-                            Text(query.isEmpty ? "Try searching for parties, teams, houses, or venues." :
-                                 "No results for “\(query)”")
+
+                            Text(query.isEmpty
+                                 ? "Try searching for parties, teams, houses, or venues."
+                                 : "No results for “\(query)”")
                                 .font(.subheadline)
                                 .foregroundColor(.white.opacity(0.65))
                                 .multilineTextAlignment(.center)
@@ -79,20 +80,47 @@ struct SearchView: View {
                                 NavigationLink {
                                     EventDetailView(event: event)
                                 } label: {
-                                    HStack(alignment: .top, spacing: 12) {
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(event.title)
-                                                .font(.headline)
-                                                .foregroundColor(.white)
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        // MARK: - Title and Date Row
+                                        HStack(alignment: .top, spacing: 12) {
+                                            VStack(alignment: .leading, spacing: 4) {
+                                                Text(event.title)
+                                                    .font(.headline)
+                                                    .foregroundColor(.white)
 
-                                            Text(event.date, style: .date)
-                                                .font(.subheadline)
-                                                .foregroundColor(.white.opacity(0.6))
+                                                Text(event.date, style: .date)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.white.opacity(0.6))
+                                            }
+
+                                            Spacer()
+
+                                            Image(systemName: "chevron.right")
+                                                .foregroundColor(.white.opacity(0.35))
+                                                .font(.system(size: 14, weight: .semibold))
                                         }
-                                        Spacer()
-                                        Image(systemName: "chevron.right")
-                                            .foregroundColor(.white.opacity(0.35))
-                                            .font(.system(size: 14, weight: .semibold))
+
+                                        // MARK: - RSVP + Votes Row
+                                        HStack(spacing: 16) {
+                                            HStack(spacing: 4) {
+                                                Image(systemName: "person.2.fill")
+                                                    .foregroundColor(.white.opacity(0.6))
+                                                    .font(.caption)
+                                                Text("\(event.rsvps ?? 0) going")
+                                                    .font(.caption)
+                                                    .foregroundColor(.white.opacity(0.7))
+                                            }
+
+                                            HStack(spacing: 4) {
+                                                Image(systemName: "arrow.up.circle.fill")
+                                                    .foregroundColor(.white.opacity(0.6))
+                                                    .font(.caption)
+                                                let netVotes = (event.upvote_count ?? 0) - (event.downvote_count ?? 0)
+                                                Text("\(netVotes)")
+                                                    .font(.caption)
+                                                    .foregroundColor(netVotes >= 0 ? .white.opacity(0.7) : .red.opacity(0.8))
+                                            }
+                                        }
                                     }
                                     .padding(16)
                                     .background(Color.white.opacity(0.06))
@@ -110,6 +138,16 @@ struct SearchView: View {
                 }
             }
         }
-        .onAppear { isFocused = true }
+        .onAppear {
+            isFocused = true
+        }
+    }
+}
+
+#Preview {
+    NavigationStack {
+        SearchView()
+            .environmentObject(EventStore())
+            .preferredColorScheme(.dark)
     }
 }

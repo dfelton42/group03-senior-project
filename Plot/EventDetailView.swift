@@ -166,6 +166,12 @@ struct EventDetailView: View {
                             do {
                                 try await SupabaseManager.shared.removeRsvp(eventId: event.id)
                                 attending = false
+
+                                // ✅ Post after DB finishes — on main actor
+                                await MainActor.run {
+                                    NotificationCenter.default.post(name: .eventsDidChange, object: nil)
+                                }
+
                             } catch {
                                 print("❌ cancel RSVP:", error.localizedDescription)
                             }
@@ -178,6 +184,12 @@ struct EventDetailView: View {
                             do {
                                 try await SupabaseManager.shared.addRsvp(eventId: event.id)
                                 attending = true
+
+                                // ✅ Post after DB finishes — on main actor
+                                await MainActor.run {
+                                    NotificationCenter.default.post(name: .eventsDidChange, object: nil)
+                                }
+
                             } catch {
                                 print("❌ add RSVP:", error.localizedDescription)
                             }
