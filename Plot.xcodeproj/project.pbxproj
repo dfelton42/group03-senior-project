@@ -35,6 +35,7 @@
 		DED19AD12EB2F89600526CB5 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED19AD02EB2F89400526CB5 /* SearchView.swift */; };
 		DED19AD32EB2F8A700526CB5 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED19AD22EB2F8A600526CB5 /* SplashView.swift */; };
 		DEE60B2E2EC48194003D2C56 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE60B2D2EC48191003D2C56 /* AuthViewModel.swift */; };
+		DEE60B302ECABD1E003D2C56 /* PlotChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE60B2F2ECABD1B003D2C56 /* PlotChat.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +82,7 @@
 		DED19AD02EB2F89400526CB5 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		DED19AD22EB2F8A600526CB5 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		DEE60B2D2EC48191003D2C56 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		DEE60B2F2ECABD1B003D2C56 /* PlotChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlotChat.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +143,7 @@
 				D03F23BF2EA9BC6000EC8829 /* Authentication */,
 				B3B873AB2E7E2F9C0008FB3A /* PlotApp.swift */,
 				B3B873AD2E7E2F9C0008FB3A /* ContentView.swift */,
+				DEE60B2F2ECABD1B003D2C56 /* PlotChat.swift */,
 				DED19ACC2EB2F86700526CB5 /* HomeView.swift */,
 				DED19ACE2EB2F87900526CB5 /* NotificationsView.swift */,
 				DED19AD02EB2F89400526CB5 /* SearchView.swift */,
@@ -343,6 +346,7 @@
 				D145CE3B2EC8519400799A11 /* LocationManager.swift in Sources */,
 				B3B873AC2E7E2F9C0008FB3A /* PlotApp.swift in Sources */,
 				DEE60B2E2EC48194003D2C56 /* AuthViewModel.swift in Sources */,
+				DEE60B302ECABD1E003D2C56 /* PlotChat.swift in Sources */,
 				DED19ACD2EB2F86800526CB5 /* HomeView.swift in Sources */,
 				D03F23C02EA9BC6000EC8829 /* AuthViewStyles.swift in Sources */,
 				D03F23C12EA9BC6000EC8829 /* SignUpView.swift in Sources */,

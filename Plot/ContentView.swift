@@ -19,6 +19,7 @@ struct ContentView: View {
             if authVM.isLoading {
                 ProgressView("Loading…")
                     .tint(Color("AccentColor"))
+
             } else if !authVM.isAuthenticated {
                 NavigationStack {
                     LoginView()
@@ -26,6 +27,7 @@ struct ContentView: View {
                         .toolbarBackground(Color("AppBackground"), for: .navigationBar)
                         .toolbarBackground(.visible, for: .navigationBar)
                 }
+
             } else {
                 TabView {
                     // HOME
@@ -36,10 +38,15 @@ struct ContentView: View {
                             .toolbarBackground(Color("AppBackground"), for: .navigationBar)
                             .toolbarBackground(.visible, for: .navigationBar)
                             .toolbar {
-                                Button("Sign Out") { Task { await authVM.signOut() } }
+                                Button("Sign Out") {
+                                    Task { await authVM.signOut() }
+                                }
                             }
                     }
-                    .tabItem { Image(systemName: "house.fill"); Text("Home") }
+                    .tabItem {
+                        Image(systemName: "house.fill")
+                        Text("Home")
+                    }
 
                     // SEARCH
                     NavigationStack {
@@ -49,8 +56,11 @@ struct ContentView: View {
                             .toolbarBackground(Color("AppBackground"), for: .navigationBar)
                             .toolbarBackground(.visible, for: .navigationBar)
                     }
-                    .tabItem { Image(systemName: "magnifyingglass"); Text("Search") }
-                    
+                    .tabItem {
+                        Image(systemName: "magnifyingglass")
+                        Text("Search")
+                    }
+
                     // CREATE EVENT
                     NavigationStack {
                         CreateEventView {
@@ -58,14 +68,14 @@ struct ContentView: View {
                                 do {
                                     let newEvents = try await SupabaseManager.shared.fetchEvents()
                                     await MainActor.run {
-                                        events = newEvents   // ensures UI actually refreshes
+                                        events = newEvents
                                     }
                                 } catch {
                                     print("Reload error:", error)
                                 }
                             }
                         }
-                        .navigationTitle("Create Event")                        
+                        .navigationTitle("Create Event")
                         .navigationBarTitleDisplayMode(.inline)
                         .toolbarBackground(Color("AppBackground"), for: .navigationBar)
                         .toolbarBackground(.visible, for: .navigationBar)
@@ -83,7 +93,23 @@ struct ContentView: View {
                             .toolbarBackground(Color("AppBackground"), for: .navigationBar)
                             .toolbarBackground(.visible, for: .navigationBar)
                     }
-                    .tabItem { Image(systemName: "bell.fill"); Text("Notifications") }
+                    .tabItem {
+                        Image(systemName: "bell.fill")
+                        Text("Notifications")
+                    }
+
+                    // CHAT
+                    NavigationStack {
+                        ChatBotView()
+                            .navigationTitle("Chat")
+                            .navigationBarTitleDisplayMode(.inline)
+                            .toolbarBackground(Color("AppBackground"), for: .navigationBar)
+                            .toolbarBackground(.visible, for: .navigationBar)
+                    }
+                    .tabItem {
+                        Image(systemName: "bubble.left.and.bubble.right.fill")
+                        Text("Chat")
+                    }
                 }
                 .tint(Color("AccentColor"))
                 .toolbarBackground(Color("AppBackground"), for: .tabBar)
@@ -93,13 +119,14 @@ struct ContentView: View {
         }
         .preferredColorScheme(.dark)
 
-        // deep links
+        // MARK: - Handle Supabase OAuth / Magic Link Deep Links
         .onOpenURL { url in
             Task {
                 do {
                     if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
                        let queryItems = components.queryItems,
                        let code = queryItems.first(where: { $0.name == "code" || $0.name == "access_token" })?.value {
+
                         _ = try await SupabaseManager.shared.client.auth
                             .exchangeCodeForSession(authCode: code)
                     } else {
@@ -107,26 +134,42 @@ struct ContentView: View {
                     }
 
                     await authVM.checkSession()
+
                     if authVM.isAuthenticated {
-                        isLoading = true
-                        events = try await SupabaseManager.shared.fetchEvents()
-                        isLoading = false
+                        let newEvents = try await SupabaseManager.shared.fetchEvents()
+                        await MainActor.run {
+                            isLoading = true
+                            events = newEvents
+                            isLoading = false
+                        }
                     }
+
                     print("✅ Supabase session restored via deep link.")
+
                 } catch {
                     print("❌ Failed to exchange auth code:", error)
                 }
             }
         }
 
-        // initial auth/events
+        // MARK: - Initial Auth + Events Load
         .task {
             await authVM.checkSession()
+
             if authVM.isAuthenticated {
-                do { events = try await SupabaseManager.shared.fetchEvents() }
-                catch { print("Error loading events:", error) }
+                do {
+                    let newEvents = try await SupabaseManager.shared.fetchEvents()
+                    await MainActor.run {
+                        events = newEvents
+                    }
+                } catch {
+                    print("Error loading events:", error)
+                }
             }
-            isLoading = false
+
+            await MainActor.run {
+                isLoading = false
+            }
         }
     }
 }

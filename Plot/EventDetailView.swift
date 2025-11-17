@@ -8,12 +8,25 @@
 import SwiftUI
 import MapKit
 
+// Voting enum from Jeron's branch
+enum VoteAction {
+    case upvote
+    case downvote
+    case none
+}
+
 struct EventDetailView: View {
     let event: Event
+
     @State private var region: MKCoordinateRegion
     @State private var attending = false
-    @State private var checking = true
-    
+    @State private var checkingRsvp = true
+
+    // Voting state
+    @State private var voteCount: Int = 0
+    @State private var userVoteStatus: VoteAction = .none
+    @State private var isLoadingVotes: Bool = true
+
     @StateObject private var locationManager = LocationManager()
 
     init(event: Event) {
@@ -24,16 +37,101 @@ struct EventDetailView: View {
         ))
     }
 
+    // MARK: - Voting Logic
+
+    private func updateVote(action: VoteAction) {
+        let previousStatus = userVoteStatus
+        var delta = 0
+
+        Task {
+            do {
+                var newStatus: VoteAction = action
+
+                // If user taps the same vote again, remove their vote
+                if userVoteStatus == action {
+                    newStatus = .none
+                    delta = (action == .upvote ? -1 : 1)
+                } else {
+                    // Switching or setting vote
+                    switch (userVoteStatus, action) {
+                    case (.upvote, .downvote):
+                        delta = -2      // +1 -> -1
+                    case (.downvote, .upvote):
+                        delta = 2       // -1 -> +1
+                    case (.none, .upvote):
+                        delta = 1
+                    case (.none, .downvote):
+                        delta = -1
+                    default:
+                        delta = 0
+                    }
+                }
+
+                voteCount += delta
+                userVoteStatus = newStatus
+
+                try await SupabaseManager.shared.updateUserVoteStatus(
+                    eventId: event.id,
+                    voteAction: newStatus
+                )
+            } catch {
+                // Roll back on failure
+                voteCount -= delta
+                userVoteStatus = previousStatus
+                print("❌ updateVote failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    // MARK: - View
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Text(event.title)
-                    .font(.title.bold())
-                    .foregroundColor(.white)
 
-                Text(event.date, style: .date)
-                    .font(.headline)
-                    .foregroundColor(.white.opacity(0.7))
+                // Title + Vote Control
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(event.title)
+                            .font(.title.bold())
+                            .foregroundColor(.white)
+
+                        Text(event.date, style: .date)
+                            .font(.headline)
+                            .foregroundColor(.white.opacity(0.7))
+                    }
+
+                    Spacer()
+
+                    if isLoadingVotes {
+                        ProgressView()
+                            .tint(Color("AccentColor"))
+                    } else {
+                        VStack(spacing: 4) {
+                            Button {
+                                updateVote(action: .upvote)
+                            } label: {
+                                Image(systemName: "chevron.up")
+                                    .font(.title2)
+                                    .foregroundColor(userVoteStatus == .upvote ? .blue : .gray)
+                            }
+                            .buttonStyle(.plain)
+
+                            Text("\(voteCount)")
+                                .font(.headline)
+                                .foregroundColor(.white)
+
+                            Button {
+                                updateVote(action: .downvote)
+                            } label: {
+                                Image(systemName: "chevron.down")
+                                    .font(.title2)
+                                    .foregroundColor(userVoteStatus == .downvote ? .red : .gray)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
 
                 Divider().background(Color.white.opacity(0.1))
 
@@ -58,7 +156,8 @@ struct EventDetailView: View {
                 )
                 .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 6)
 
-                if checking {
+                // RSVP section
+                if checkingRsvp {
                     ProgressView("Checking RSVP…")
                         .tint(Color("AccentColor"))
                 } else if attending {
@@ -107,7 +206,6 @@ struct EventDetailView: View {
                     }
                 }
                 .padding(.top, 12)
-
             }
             .padding(16)
         }
@@ -116,18 +214,58 @@ struct EventDetailView: View {
         .toolbarBackground(Color("AppBackground"), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .task {
-            // Request location immediately
+            // Request location right away
             locationManager.requestLocation()
 
-            // Fetch RSVP status
+            // Fetch user action status (RSVP + votes)
             do {
-                let status = try await SupabaseManager.shared.fetchRsvpStatus(eventId: event.id)
-                attending = status
+                let (isDownvoting, isUpvoting, isAttending) =
+                    try await getUserActionStatuses(for: event.id)
+
+                if isUpvoting {
+                    userVoteStatus = .upvote
+                } else if isDownvoting {
+                    userVoteStatus = .downvote
+                } else {
+                    userVoteStatus = .none
+                }
+
+                attending = isAttending
+
+                // Use optionals safely, defaulting to 0
+                let up = event.upvote_count ?? 0
+                let down = event.downvote_count ?? 0
+                voteCount = up - down
             } catch {
                 attending = false
+                userVoteStatus = .none
+                print("❌ getUserActionStatuses:", error.localizedDescription)
             }
-            checking = false
+
+            checkingRsvp = false
+            isLoadingVotes = false
         }
     }
 }
 
+// Helper: uses SupabaseManager.fetchUserEventActions
+func getUserActionStatuses(for eventID: UUID) async throws
+    -> (isDownvoting: Bool, isUpvoting: Bool, isAttending: Bool)
+{
+    let actionRecords: [[String: Any]] =
+        try await SupabaseManager.shared.fetchUserEventActions(eventId: eventID)
+
+    guard let record = actionRecords.first else {
+        return (isDownvoting: false, isUpvoting: false, isAttending: false)
+    }
+
+    let downvoteValue = record["is_downvoting"] as? Int ?? 0
+    let upvoteValue = record["is_upvoting"] as? Int ?? 0
+    let attendingValue = record["is_attending"] as? Int ?? 0
+
+    let isDownvoting = downvoteValue == 1
+    let isUpvoting = upvoteValue == 1
+    let isAttending = attendingValue == 1
+
+    return (isDownvoting: isDownvoting, isUpvoting: isUpvoting, isAttending: isAttending)
+}

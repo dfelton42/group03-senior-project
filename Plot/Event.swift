@@ -15,7 +15,13 @@ struct Event: Identifiable, Codable {
     let date: Date
     let latitude: Double?
     let longitude: Double?
-    let rsvps: Int
+    
+    // Supabase can return NULL here, so keep it optional
+    let rsvps: Int?
+    
+    // Upvote/downvote counts from DB (snake_case matches column names)
+    let upvote_count: Int?
+    let downvote_count: Int?
 
     // Derived coordinate for MapKit etc.
     var coordinate: CLLocationCoordinate2D {
