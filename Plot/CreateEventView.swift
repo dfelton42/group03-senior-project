@@ -15,11 +15,14 @@ struct CreateEventView: View {
     @State private var description = ""
     @State private var date = Date()
     @State private var address = ""
+    @State private var city = ""
+    @State private var state = ""
     @State private var isBusy = false
     @State private var successMessage: String?
+    @State private var errorMessage: String?
 
     // To handle address lookup
-    @State private var geocoder = CLGeocoder()
+    private let geocoder = CLGeocoder()
 
     var body: some View {
         AuthScaffold(title: "Create Event") {
@@ -51,7 +54,25 @@ struct CreateEventView: View {
                 HStack(spacing: 10) {
                     Image(systemName: "mappin.and.ellipse")
                         .foregroundColor(.white.opacity(0.6))
-                    TextField("Address (e.g. 1 LMU Dr, Los Angeles, CA)", text: $address)
+                    TextField("Street Address", text: $address)
+                        .textInputAutocapitalization(.words)
+                }
+                .authField()
+
+                // City
+                HStack(spacing: 10) {
+                    Image(systemName: "building.2")
+                        .foregroundColor(.white.opacity(0.6))
+                    TextField("City", text: $city)
+                        .textInputAutocapitalization(.words)
+                }
+                .authField()
+
+                // State
+                HStack(spacing: 10) {
+                    Image(systemName: "map.fill")
+                        .foregroundColor(.white.opacity(0.6))
+                    TextField("State", text: $state)
                         .textInputAutocapitalization(.words)
                 }
                 .authField()
@@ -61,37 +82,43 @@ struct CreateEventView: View {
                     Task {
                         guard !isBusy else { return }
                         isBusy = true
+                        errorMessage = nil
+                        successMessage = nil
                         defer { isBusy = false }
 
                         do {
-                            var lat: Double? = nil
-                            var lon: Double? = nil
+                            // Combine inputs into a single query
+                            let fullAddress = "\(address), \(city), \(state)"
+                            print("📍 Geocoding \(fullAddress)")
 
-                            // Use CLGeocoder to get coordinates from address
-                            if !address.isEmpty {
-                                if let location = try await geocode(address: address) {
-                                    @State var address = ""
-                                } else {
-                                    print("⚠️ Could not geocode address.")
-                                }
+                            guard let coordinate = try await geocode(fullAddress) else {
+                                errorMessage = "Unable to find that location. Please verify and try again."
+                                return
                             }
 
                             try await SupabaseManager.shared.createEvent(
                                 title: title,
                                 description: description,
                                 date: date,
-                                latitude: lat,
-                                longitude: lon
+                                latitude: coordinate.latitude,
+                                longitude: coordinate.longitude
                             )
 
-                            successMessage = "✅ Event Created!"
-                            title = ""
-                            description = ""
-                            address = ""
-                            onCreated?()
+                            await MainActor.run {
+                                successMessage = "✅ Event Created!"
+                                title = ""
+                                description = ""
+                                address = ""
+                                city = ""
+                                state = ""
+                                onCreated?()
+                            }
+
                         } catch {
-                            successMessage = "❌ Failed: \(error.localizedDescription)"
-                            print("❌ Error creating event:", error)
+                            print("❌ Error creating event:", error.localizedDescription)
+                            await MainActor.run {
+                                errorMessage = "Could not create event. Try again."
+                            }
                         }
                     }
                 } label: {
@@ -103,10 +130,15 @@ struct CreateEventView: View {
                 .primaryCTA()
                 .padding(.top, 4)
 
-                if let message = successMessage {
-                    Text(message)
+                if let msg = successMessage {
+                    Text(msg)
                         .font(.callout)
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundColor(.green)
+                        .padding(.top, 8)
+                } else if let error = errorMessage {
+                    Text(error)
+                        .font(.callout)
+                        .foregroundColor(.red)
                         .padding(.top, 8)
                 }
 
@@ -117,13 +149,13 @@ struct CreateEventView: View {
     }
 
     // MARK: - Geocoding Helper
-    private func geocode(address: String) async throws -> CLLocationCoordinate2D? {
-        return try await withCheckedThrowingContinuation { continuation in
-            geocoder.geocodeAddressString(address) { placemarks, error in
+    private func geocode(_ query: String) async throws -> CLLocationCoordinate2D? {
+        try await withCheckedThrowingContinuation { continuation in
+            geocoder.geocodeAddressString(query) { placemarks, error in
                 if let error = error {
                     continuation.resume(throwing: error)
-                } else if let loc = placemarks?.first?.location {
-                    continuation.resume(returning: loc.coordinate)
+                } else if let location = placemarks?.first?.location {
+                    continuation.resume(returning: location.coordinate)
                 } else {
                     continuation.resume(returning: nil)
                 }
