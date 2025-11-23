@@ -1,0 +1,32 @@
+Nice job on this, art-wise, it's very appealing.  I like the dual column
+   layout ~ a nice break from the three columns that everyone else seems
+   to be using.
+
+Unfortunately, it won't quite fly for printing:
+   * The background is too dark.  Consider making it a gradient so that
+      it fades from one side to the other or from top to bottom or corner
+      to corner.  This will keep Masao happy and help prevent him from
+      kicking it back.
+   * You need your pictures in addition to your names; Masao won't print
+      it without that.
+   * Remember that this poster is THREE FEET TALL ~ you have TONS of room
+      to put more information in the text boxes.  What you have is good,
+      but you could put more.
+   * Remember that the text is going to be HUGE as you've done it, so
+      keep that in mind.
+   * You also need the text "CMSI 4071" and "Fall 2025" on there
+      somewhere; Masao won't print it without that.
+   * The version you put in your repository can't be opened with Acrobat.
+      I renamed it to "Poster.pdf" but still no joy so I put it back.
+      Please make sure that is a PDF, that it is 48" wide by 36" high,
+      and make sure that it can be opened using Adobe.
+
+I'm sorry to have to give you so many things to do, but I know what Masao
+   will and will not accept and that is kind of the ultimate driving force
+   for the comments.  I really like the poster as-is and you did a good
+   job with it.  It's artful, colorful, and thoughtfully arranged.
+
+When you make those changes, send a copy to Masao for printing.  His
+   e-mail address is:
+
+   Masao.Kitamura@lmu.edu
