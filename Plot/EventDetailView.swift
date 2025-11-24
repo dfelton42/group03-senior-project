@@ -8,7 +8,6 @@
 import SwiftUI
 import MapKit
 
-// Voting enum from Jeron's branch
 enum VoteAction {
     case upvote
     case downvote
@@ -22,12 +21,15 @@ struct EventDetailView: View {
     @State private var attending = false
     @State private var checkingRsvp = true
 
-    // Voting state
-    @State private var voteCount: Int = 0
+    @State private var voteCount = 0
     @State private var userVoteStatus: VoteAction = .none
-    @State private var isLoadingVotes: Bool = true
+    @State private var isLoadingVotes = true
 
     @StateObject private var locationManager = LocationManager()
+
+    @State private var driveTime: String?
+    @State private var walkTime: String?
+    @State private var isLoadingTravel = true
 
     init(event: Event) {
         self.event = event
@@ -45,19 +47,17 @@ struct EventDetailView: View {
 
         Task {
             do {
-                var newStatus: VoteAction = action
+                var newStatus = action
 
-                // If user taps the same vote again, remove their vote
                 if userVoteStatus == action {
                     newStatus = .none
                     delta = (action == .upvote ? -1 : 1)
                 } else {
-                    // Switching or setting vote
                     switch (userVoteStatus, action) {
                     case (.upvote, .downvote):
-                        delta = -2      // +1 -> -1
+                        delta = -2
                     case (.downvote, .upvote):
-                        delta = 2       // -1 -> +1
+                        delta = 2
                     case (.none, .upvote):
                         delta = 1
                     case (.none, .downvote):
@@ -75,10 +75,9 @@ struct EventDetailView: View {
                     voteAction: newStatus
                 )
             } catch {
-                // Roll back on failure
                 voteCount -= delta
                 userVoteStatus = previousStatus
-                print("❌ updateVote failed: \(error.localizedDescription)")
+                print("❌ updateVote failed:", error.localizedDescription)
             }
         }
     }
@@ -89,7 +88,7 @@ struct EventDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
 
-                // Title + Vote Control
+                // Title + Voting
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(event.title)
@@ -115,7 +114,6 @@ struct EventDetailView: View {
                                     .font(.title2)
                                     .foregroundColor(userVoteStatus == .upvote ? .blue : .gray)
                             }
-                            .buttonStyle(.plain)
 
                             Text("\(voteCount)")
                                 .font(.headline)
@@ -128,7 +126,6 @@ struct EventDetailView: View {
                                     .font(.title2)
                                     .foregroundColor(userVoteStatus == .downvote ? .red : .gray)
                             }
-                            .buttonStyle(.plain)
                         }
                     }
                 }
@@ -145,18 +142,13 @@ struct EventDetailView: View {
                         Image(systemName: "mappin.circle.fill")
                             .font(.title)
                             .foregroundColor(Color("AccentColor"))
-                            .shadow(radius: 3)
                     }
                 }
                 .frame(height: 260)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(Color.white.opacity(0.07))
-                )
-                .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 6)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .shadow(radius: 6)
 
-                // RSVP section
+                // RSVP SECTION
                 if checkingRsvp {
                     ProgressView("Checking RSVP…")
                         .tint(Color("AccentColor"))
@@ -166,12 +158,6 @@ struct EventDetailView: View {
                             do {
                                 try await SupabaseManager.shared.removeRsvp(eventId: event.id)
                                 attending = false
-
-                                // ✅ Post after DB finishes — on main actor
-                                await MainActor.run {
-                                    NotificationCenter.default.post(name: .eventsDidChange, object: nil)
-                                }
-
                             } catch {
                                 print("❌ cancel RSVP:", error.localizedDescription)
                             }
@@ -184,12 +170,6 @@ struct EventDetailView: View {
                             do {
                                 try await SupabaseManager.shared.addRsvp(eventId: event.id)
                                 attending = true
-
-                                // ✅ Post after DB finishes — on main actor
-                                await MainActor.run {
-                                    NotificationCenter.default.post(name: .eventsDidChange, object: nil)
-                                }
-
                             } catch {
                                 print("❌ add RSVP:", error.localizedDescription)
                             }
@@ -198,86 +178,134 @@ struct EventDetailView: View {
                     .primaryCTA()
                 }
 
-                // MARK: - USER LOCATION SECTION
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Your Location:")
+                // LOCATION + TRAVEL
+                VStack(alignment: .leading, spacing: 10) {
+
+                    Text("Google Maps Travel Estimates")
                         .font(.headline)
                         .foregroundColor(.white)
 
-                    if locationManager.isAuthorized {
-                        if let loc = locationManager.userLocation {
-                            Text("Lat: \(loc.latitude), Lon: \(loc.longitude)")
+                    if isLoadingTravel {
+                        HStack(spacing: 8) {
+                            ProgressView()
+                                .tint(Color("AccentColor"))
+
+                            Text("Calculating…")
                                 .foregroundColor(.white.opacity(0.7))
-                        } else {
-                            Text("Locating…")
-                                .foregroundColor(.white.opacity(0.7))
+                                .font(.subheadline)
                         }
+                        .padding(.vertical, 4)
+
                     } else {
-                        Text("Location access not granted.")
-                            .foregroundColor(.white.opacity(0.5))
+                        VStack(alignment: .leading, spacing: 6) {
+
+                            if let driveTime {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "car.fill")
+                                        .foregroundColor(.white.opacity(0.7))
+
+                                    Text(driveTime)
+                                        .foregroundColor(.white.opacity(0.85))
+                                }
+                            }
+
+                            if let walkTime {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "figure.walk")
+                                        .foregroundColor(.white.opacity(0.7))
+
+                                    Text(walkTime)
+                                        .foregroundColor(.white.opacity(0.85))
+                                }
+                            }
+                        }
                     }
                 }
-                .padding(.top, 12)
+                .padding(.top, 10)
             }
             .padding(16)
         }
         .background(Color("AppBackground").ignoresSafeArea())
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(Color("AppBackground"), for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
         .task {
-            // Request location right away
             locationManager.requestLocation()
 
-            // Fetch user action status (RSVP + votes)
+            // User Action Statuses
             do {
-                let (isDownvoting, isUpvoting, isAttending) =
+                let (down, up, attendingStatus) =
                     try await getUserActionStatuses(for: event.id)
 
-                if isUpvoting {
-                    userVoteStatus = .upvote
-                } else if isDownvoting {
-                    userVoteStatus = .downvote
-                } else {
-                    userVoteStatus = .none
-                }
+                if up { userVoteStatus = .upvote }
+                else if down { userVoteStatus = .downvote }
+                else { userVoteStatus = .none }
 
-                attending = isAttending
+                attending = attendingStatus
 
-                // Use optionals safely, defaulting to 0
-                let up = event.upvote_count ?? 0
-                let down = event.downvote_count ?? 0
-                voteCount = up - down
-            } catch {
-                attending = false
-                userVoteStatus = .none
-                print("❌ getUserActionStatuses:", error.localizedDescription)
-            }
+                let upCount = event.upvote_count ?? 0
+                let downCount = event.downvote_count ?? 0
+                voteCount = upCount - downCount
+
+            } catch {}
 
             checkingRsvp = false
             isLoadingVotes = false
+
+            // Travel Est.
+            if let loc = locationManager.userLocation {
+                Task {
+                    isLoadingTravel = true
+
+                    let (drive, walk) = try await SupabaseManager.shared.fetchTravelEstimates(
+                        startLat: loc.latitude,
+                        startLng: loc.longitude,
+                        endLat: event.coordinate.latitude,
+                        endLng: event.coordinate.longitude
+                    )
+
+                    driveTime = drive
+                    walkTime = walk
+
+                    isLoadingTravel = false
+                }
+            }
+        }
+        .onChange(of: locationManager.userLocation?.latitude) {
+            if let loc = locationManager.userLocation {
+                Task {
+                    isLoadingTravel = true
+
+                    let (drive, walk) = try await SupabaseManager.shared.fetchTravelEstimates(
+                        startLat: loc.latitude,
+                        startLng: loc.longitude,
+                        endLat: event.coordinate.latitude,
+                        endLng: event.coordinate.longitude
+                    )
+
+                    driveTime = drive
+                    walkTime = walk
+
+                    isLoadingTravel = false
+                }
+            }
         }
     }
 }
 
-// Helper: uses SupabaseManager.fetchUserEventActions
-func getUserActionStatuses(for eventID: UUID) async throws
-    -> (isDownvoting: Bool, isUpvoting: Bool, isAttending: Bool)
-{
-    let actionRecords: [[String: Any]] =
-        try await SupabaseManager.shared.fetchUserEventActions(eventId: eventID)
 
-    guard let record = actionRecords.first else {
-        return (isDownvoting: false, isUpvoting: false, isAttending: false)
+
+// Helper
+func getUserActionStatuses(for eventID: UUID) async throws
+-> (Bool, Bool, Bool)
+{
+    let rows = try await SupabaseManager.shared.fetchUserEventActions(eventId: eventID)
+
+    guard let row = rows.first else {
+        return (false, false, false)
     }
 
-    let downvoteValue = record["is_downvoting"] as? Int ?? 0
-    let upvoteValue = record["is_upvoting"] as? Int ?? 0
-    let attendingValue = record["is_attending"] as? Int ?? 0
-
-    let isDownvoting = downvoteValue == 1
-    let isUpvoting = upvoteValue == 1
-    let isAttending = attendingValue == 1
-
-    return (isDownvoting: isDownvoting, isUpvoting: isUpvoting, isAttending: isAttending)
+    return (
+        (row["is_downvoting"] as? Int ?? 0) == 1,
+        (row["is_upvoting"] as? Int ?? 0) == 1,
+        (row["is_attending"] as? Int ?? 0) == 1
+    )
 }
+

@@ -15,14 +15,19 @@ extension Notification.Name {
 class SupabaseManager {
     static let shared = SupabaseManager()
     let client: SupabaseClient
+    let anonKey: String
     var currentUser: User?
 
     private init() {
+        let key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmZm5ic2V5dXRkYWp0a2htZ3ZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3ODYzODQsImV4cCI6MjA3NTM2MjM4NH0.r4z5R9gufafrMQ_HvHbb9Yna0a5zlv1244v4tD-wWUU"
+        
+        self.anonKey = key
+        
         self.client = SupabaseClient(
             supabaseURL: URL(string: "https://zffnbseyutdajtkhmgvl.supabase.co")!,
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmZm5ic2V5dXRkYWp0a2htZ3ZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3ODYzODQsImV4cCI6MjA3NTM2MjM4NH0.r4z5R9gufafrMQ_HvHbb9Yna0a5zlv1244v4tD-wWUU"
+            supabaseKey: key
         )
-    }    
+    }
     
 
     // MARK: - Events
@@ -217,4 +222,44 @@ class SupabaseManager {
             return false
         }
     }
+    
+    // MARK: - Travel Estimate
+    func fetchTravelEstimates(
+        startLat: Double,
+        startLng: Double,
+        endLat: Double,
+        endLng: Double
+    ) async throws -> (driveTime: String?, walkTime: String?) {
+
+        guard let url = URL(string: "https://zffnbseyutdajtkhmgvl.supabase.co/functions/v1/travel-estimate") else {
+            return (nil, nil)
+        }
+
+        let payload: [String: Any] = [
+            "startLat": startLat,
+            "startLng": startLng,
+            "endLat": endLat,
+            "endLng": endLng
+        ]
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(anonKey)", forHTTPHeaderField: "Authorization")
+
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+
+        let (data, _) = try await URLSession.shared.data(for: request)
+
+        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+
+        let drive = json?["driving"] as? [String: Any]
+        let walk = json?["walking"] as? [String: Any]
+
+        let driveTime = drive?["duration_text"] as? String
+        let walkTime = walk?["duration_text"] as? String
+
+        return (driveTime, walkTime)
+    }
+
 }
